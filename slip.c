@@ -24,30 +24,82 @@ void add_history(char* unused) {}
 #include <editline/readline.h>
 #endif
 
-long operate(char* operation, long x, long y) {
-	if (strcmp(operation, "+") == 0) { return x + y; }
-	if (strcmp(operation, "-") == 0) { return x - y; }
-	if (strcmp(operation, "/") == 0) { return x / y; }
-	if (strcmp(operation, "*") == 0) { return x * y; }
-	if (strcmp(operation, "%") == 0) { return x % y; }
-	if (strcmp(operation, "^") == 0) { return pow(x, y); }
+typedef struct {
+	int type;
+	long num;
+	int err;
+} lval;
 
-	if (strcmp(operation, "max") == 0) { return x > y ? x : y; } 
-	if (strcmp(operation, "min") == 0) { return x < y ? x : y; } 
+enum { LVAL_NUM, LVAL_ERR };
 
-	return 0;
+enum { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM };
+
+lval lval_num(long x) {
+	lval v;
+	v.type = LVAL_NUM;
+	v.num = x;
+	return v;
 }
 
-long parse_tree(mpc_ast_t* tree) {
-	bool is_number = strstr(tree->tag, "number") != NULL;	
-	if (is_number) {
-		return(atoi(tree->contents));
+lval lval_err(int x) {
+	lval v;
+	v.type = LVAL_ERR;
+	v.err = x;
+	return v;
+}
+
+void print_lval(lval v) {
+	if (v.type == LVAL_NUM) {
+		printf("%li\n", v.num);
+		return;
 	}
 
-	long accumulator = parse_tree(tree->children[2]);
+	switch (v.err) {
+		case LERR_DIV_ZERO:
+			printf("error: division by zero.\n");
+			break;
+		case LERR_BAD_OP:
+			printf("error: invalid operator.\n");
+			break;
+		case LERR_BAD_NUM:
+			printf("error: invalud number.\n");
+			break;
+	}
+}
+
+lval operate(char* operation, lval x, lval y) {
+	// If either value is an error, just return it
+	if (x.type == LVAL_ERR) { return x; }
+	if (y.type == LVAL_ERR) { return y; }
+
+	// Catch division by zero error
+	if (strcmp(operation, "/") == 0 && y.num == 0) { return lval_err(LERR_DIV_ZERO); }
+
+	if (strcmp(operation, "+") == 0) { return lval_num(x.num + y.num); }
+	if (strcmp(operation, "-") == 0) { return lval_num(x.num - y.num); }
+	if (strcmp(operation, "/") == 0) { return lval_num(x.num / y.num); }
+	if (strcmp(operation, "*") == 0) { return lval_num(x.num * y.num); }
+	if (strcmp(operation, "%") == 0) { return lval_num(x.num % y.num); }
+	if (strcmp(operation, "^") == 0) { return lval_num(pow(x.num, y.num)); }
+
+	if (strcmp(operation, "max") == 0) { return x.num > y.num ? x : y; } 
+	if (strcmp(operation, "min") == 0) { return x.num < y.num ? x : y; } 
+
+	return lval_err(LERR_BAD_OP);
+}
+
+lval evaluate_tree(mpc_ast_t* tree) {
+	bool is_number = strstr(tree->tag, "number") != NULL;	
+	if (is_number) {
+		errno = 0;
+		long number = strtol(tree->contents, NULL, 10);
+		return errno == ERANGE ? lval_err(LERR_BAD_NUM) : lval_num(number);
+	}
+
+	lval accumulator = evaluate_tree(tree->children[2]);
 
 	for (int i = 3; i < tree->children_num - 1; i++) {
-		long child_value = parse_tree(tree->children[i]);
+		lval child_value = evaluate_tree(tree->children[i]);
 		accumulator = operate(tree->children[1]->contents, accumulator, child_value);
 	}
 
@@ -77,12 +129,17 @@ int main(int argc, char** argv) {
 		add_history(input);
 
 		mpc_result_t result;
-		mpc_parse("<stdin>", input, Slip, &result);
+		bool success = mpc_parse("<stdin>", input, Slip, &result);
+
+		if (!success) {
+			mpc_err_print(result.error);
+			free(input);
+			continue;
+		}
 
 		if (getenv("PRINT_TREE")) { mpc_ast_print(result.output); }
 
-		long output = parse_tree(result.output);
-		printf("%ld\n", output);
+		print_lval(evaluate_tree(result.output));
 
 		free(input);
 		mpc_ast_delete(result.output);
