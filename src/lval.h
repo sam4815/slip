@@ -9,7 +9,7 @@ typedef struct lval {
 	struct lval** cell;
 } lval;
 
-enum { LVAL_NUM, LVAL_ERR, LVAL_SEXPR, LVAL_SYM };
+enum { LVAL_NUM, LVAL_ERR, LVAL_SEXPR, LVAL_QEXPR, LVAL_SYM };
 
 lval* lval_num(long num);
 lval* lval_err(char* err);

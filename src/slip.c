@@ -98,6 +98,7 @@ int main(int argc, char** argv) {
 	mpc_parser_t* Slip = mpc_new("slip");
 	mpc_parser_t* Expression = mpc_new("expr");
 	mpc_parser_t* Sexpression = mpc_new("sexpr");
+	mpc_parser_t* Qexpression = mpc_new("qexpr");
 	mpc_parser_t* Symbol = mpc_new("symbol");
 	mpc_parser_t* Number = mpc_new("number");
 
@@ -107,10 +108,11 @@ int main(int argc, char** argv) {
 			           | \"min\" | \"max\" ;                                        \
 			number     : /-?[0-9]+/ ;                                               \
 			sexpr      : '(' <expr>* ')' ;                                          \
-			expr       : <number> | <sexpr> | <symbol> ;                            \
+			qexpr      : '{' <expr>* '}' ;                                          \
+			expr       : <number> | <sexpr> | <qexpr> | <symbol> ;                  \
 			slip	   : /^/ <expr>* /$/ ;                                          \
 			",
-			Slip, Sexpression, Expression, Symbol, Number);
+			Slip, Sexpression, Qexpression, Expression, Symbol, Number);
 
 	puts("slip v0.1\n");
 
@@ -137,7 +139,7 @@ int main(int argc, char** argv) {
 		mpc_ast_delete(result.output);
 	}
 
-	mpc_cleanup(5, Slip, Sexpression, Expression, Symbol, Number);
+	mpc_cleanup(6, Slip, Sexpression, Qexpression, Expression, Symbol, Number);
 	
 	return 0;
 }
