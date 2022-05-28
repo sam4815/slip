@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdbool.h>
-#include "mpc/mpc.h"
+#include "../mpc/mpc.h"
+#include "lval.h"
 
 #ifdef _WIN32
 #include <string.h>
@@ -23,49 +24,6 @@ void add_history(char* unused) {}
 #else
 #include <editline/readline.h>
 #endif
-
-typedef struct {
-	int type;
-	long num;
-	int err;
-} lval;
-
-enum { LVAL_NUM, LVAL_ERR };
-
-enum { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM };
-
-lval lval_num(long x) {
-	lval v;
-	v.type = LVAL_NUM;
-	v.num = x;
-	return v;
-}
-
-lval lval_err(int x) {
-	lval v;
-	v.type = LVAL_ERR;
-	v.err = x;
-	return v;
-}
-
-void print_lval(lval v) {
-	if (v.type == LVAL_NUM) {
-		printf("%li\n", v.num);
-		return;
-	}
-
-	switch (v.err) {
-		case LERR_DIV_ZERO:
-			printf("error: division by zero.\n");
-			break;
-		case LERR_BAD_OP:
-			printf("error: invalid operator.\n");
-			break;
-		case LERR_BAD_NUM:
-			printf("error: invalud number.\n");
-			break;
-	}
-}
 
 lval operate(char* operation, lval x, lval y) {
 	// If either value is an error, just return it
@@ -108,19 +66,21 @@ lval evaluate_tree(mpc_ast_t* tree) {
 
 int main(int argc, char** argv) {
 	mpc_parser_t* Slip = mpc_new("slip");
-	mpc_parser_t* Expression = mpc_new("expression");
-	mpc_parser_t* Operator = mpc_new("operator");
+	mpc_parser_t* Expression = mpc_new("expr");
+	mpc_parser_t* Sexpression = mpc_new("sexpr");
+	mpc_parser_t* Symbol = mpc_new("symbol");
 	mpc_parser_t* Number = mpc_new("number");
 
 	mpca_lang(MPCA_LANG_DEFAULT,
 			"                                                                       \
-			operator   : '+' | '-' | '*' | '/' | '%' | '^'                          \
+			symbol     : '+' | '-' | '*' | '/' | '%' | '^'                          \
 			           | \"min\" | \"max\" ;                                        \
 			number     : /-?[0-9]+/ ;                                               \
-			expression : <number> | '(' <operator> <expression>+ ')' ;              \
-			slip	   : /^/ <operator> <expression>+ /$/ ;                         \
+			sexpr      : '(' <expr>* ')' ;                                          \
+			expr       : <number> | <sexpr> | <symbol> ;                            \
+			slip	   : /^/ <expr>* /$/ ;                                          \
 			",
-			Slip, Expression, Operator, Number);
+			Slip, Sexpression, Expression, Symbol, Number);
 
 	puts("slip v0.1\n");
 
@@ -145,7 +105,7 @@ int main(int argc, char** argv) {
 		mpc_ast_delete(result.output);
 	}
 
-	mpc_cleanup(4, Slip, Expression, Operator, Number);
+	mpc_cleanup(5, Slip, Sexpression, Expression, Symbol, Number);
 	
 	return 0;
 }
