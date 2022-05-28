@@ -25,44 +25,74 @@ void add_history(char* unused) {}
 #include <editline/readline.h>
 #endif
 
-lval operate(char* operation, lval x, lval y) {
-	// If either value is an error, just return it
-	if (x.type == LVAL_ERR) { return x; }
-	if (y.type == LVAL_ERR) { return y; }
+lval* operate(char* operation, lval* v) {
+	lval* accumulator = pop_lval(v, 0);
 
-	// Catch division by zero error
-	if (strcmp(operation, "/") == 0 && y.num == 0) { return lval_err(LERR_DIV_ZERO); }
-
-	if (strcmp(operation, "+") == 0) { return lval_num(x.num + y.num); }
-	if (strcmp(operation, "-") == 0) { return lval_num(x.num - y.num); }
-	if (strcmp(operation, "/") == 0) { return lval_num(x.num / y.num); }
-	if (strcmp(operation, "*") == 0) { return lval_num(x.num * y.num); }
-	if (strcmp(operation, "%") == 0) { return lval_num(x.num % y.num); }
-	if (strcmp(operation, "^") == 0) { return lval_num(pow(x.num, y.num)); }
-
-	if (strcmp(operation, "max") == 0) { return x.num > y.num ? x : y; } 
-	if (strcmp(operation, "min") == 0) { return x.num < y.num ? x : y; } 
-
-	return lval_err(LERR_BAD_OP);
-}
-
-lval evaluate_tree(mpc_ast_t* tree) {
-	bool is_number = strstr(tree->tag, "number") != NULL;	
-	if (is_number) {
-		errno = 0;
-		long number = strtol(tree->contents, NULL, 10);
-		return errno == ERANGE ? lval_err(LERR_BAD_NUM) : lval_num(number);
+	// If operation is subtract, and there are no
+	// further arguments, negate it
+	if (strcmp(operation, "-") == 0 && v->count == 0) {
+		accumulator->num = -(accumulator->num);
 	}
 
-	lval accumulator = evaluate_tree(tree->children[2]);
+	while (v->count != 0) {
+		lval* next_lval = pop_lval(v, 0);
 
-	for (int i = 3; i < tree->children_num - 1; i++) {
-		lval child_value = evaluate_tree(tree->children[i]);
-		accumulator = operate(tree->children[1]->contents, accumulator, child_value);
+		if (accumulator->type != LVAL_NUM || next_lval->type != LVAL_NUM) {
+			delete_lvals(2, accumulator, next_lval);
+			accumulator = lval_err("Cannot operate on non-number");
+			break;
+		}
+
+		int x = accumulator->num;
+		int y = next_lval->num;
+
+		// Catch division by zero error
+		if (strcmp(operation, "/") == 0 && y == 0) {
+			delete_lvals(2, accumulator, next_lval);
+			accumulator = lval_err("Can't divide by 0");
+			break;
+		}
+
+		if (strcmp(operation, "+") == 0) { accumulator->num = x + y; }
+		if (strcmp(operation, "-") == 0) { accumulator->num = x - y; }
+		if (strcmp(operation, "/") == 0) { accumulator->num = x / y; }
+		if (strcmp(operation, "*") == 0) { accumulator->num = x * y; }
+		if (strcmp(operation, "%") == 0) { accumulator->num = x % y; }
+		if (strcmp(operation, "^") == 0) { accumulator->num = pow(x, y); }
+		if (strcmp(operation, "max") == 0) { accumulator->num = x > y ? x : y; }
+		if (strcmp(operation, "min") == 0) { accumulator->num = x < y ? x : y; }
+		
+		delete_lval(next_lval);
 	}
-
+	
+	delete_lval(v);
 	return accumulator;
 }
+
+lval* evaluate_lval(lval* v) {
+	for (int i = 0; i < v->count; i++) {
+		bool is_sexpr = v->cell[i]->type == LVAL_SEXPR;
+		v->cell[i] = is_sexpr ? evaluate_lval(v->cell[i]) : v->cell[i];
+
+		if (v->cell[i]->type == LVAL_ERR) {
+			return extract_lval(v, i);
+		}
+	}
+
+	if (v->count == 0) { return v; }
+	if (v->count == 1) { return extract_lval(v, 0); }
+
+	lval* symLval = pop_lval(v, 0);
+	if (symLval->type != LVAL_SYM) {
+		delete_lvals(2, symLval, v);
+		return lval_err("S-expression does not start with a symbol");
+	}
+
+	lval* result = operate(symLval->sym, v);
+	delete_lval(symLval);
+
+	return result;
+};
 
 int main(int argc, char** argv) {
 	mpc_parser_t* Slip = mpc_new("slip");
@@ -98,10 +128,12 @@ int main(int argc, char** argv) {
 		}
 
 		if (getenv("PRINT_TREE")) { mpc_ast_print(result.output); }
-
-		print_lval(evaluate_tree(result.output));
+		
+		lval* evaluation = evaluate_lval(parse_lval(result.output));
+		println_lval(evaluation);
 
 		free(input);
+		delete_lval(evaluation);
 		mpc_ast_delete(result.output);
 	}
 

@@ -1,14 +1,28 @@
-typedef struct {
+typedef struct lval {
 	int type;
 	long num;
-	int err;
+
+	char* err;
+	char* sym;
+
+	int count;
+	struct lval** cell;
 } lval;
 
-enum { LVAL_NUM, LVAL_ERR };
+enum { LVAL_NUM, LVAL_ERR, LVAL_SEXPR, LVAL_SYM };
 
-enum { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM };
+lval* lval_num(long num);
+lval* lval_err(char* err);
+lval* lval_sym(char* sym);
+lval* lval_sexpr(void);
 
-lval lval_num(long x);
-lval lval_err(int x);
-void print_lval(lval v);
+lval* parse_lval(mpc_ast_t* tree);
+lval* pop_lval(lval* v, int i);
+lval* extract_lval(lval* v, int i);
+void delete_lval(lval* v);
+void delete_lvals(int numArgs, ...);
+
+void print_lval_expr(lval* v, char open, char close);
+void print_lval(lval* v);
+void println_lval(lval* v);
 
