@@ -66,11 +66,12 @@ lval* parse_lval(mpc_ast_t* tree) {
 	}
 
 	for (int i = 0; i < tree->children_num; i++) {
-		if (strcmp(tree->children[i]->contents, "(") == 0) continue;
-		if (strcmp(tree->children[i]->contents, ")") == 0) continue;
-		if (strcmp(tree->children[i]->contents, "}") == 0) continue;	
-		if (strcmp(tree->children[i]->contents, "{") == 0) continue;
-		if (strcmp(tree->children[i]->tag, "regex") == 0) continue;
+		if (strcmp(tree->children[i]->contents, "(") == 0) { continue; }
+		if (strcmp(tree->children[i]->contents, ")") == 0) { continue; }
+		if (strcmp(tree->children[i]->contents, "}") == 0) { continue; }
+		if (strcmp(tree->children[i]->contents, "{") == 0) { continue; }
+
+		if (strcmp(tree->children[i]->tag, "regex") == 0) { continue; }
 
 		parsed_lval = append_lval(parsed_lval, parse_lval(tree->children[i]));
 	}
@@ -94,6 +95,14 @@ lval* extract_lval(lval* v, int i) {
 	lval* popped_lval = pop_lval(v, i);
 	delete_lval(v);
 	return popped_lval;
+}
+
+lval* join_lval(lval* x, lval* y) {
+	for (int i = 0; i < y->count; i++) {
+		append_lval(x, pop_lval(y->cell[0], 0));
+	}
+	delete_lval(y);
+	return x;
 }
 
 void delete_lval(lval* v) {
@@ -131,7 +140,7 @@ void print_lval_expr(lval* v, char open, char close) {
 
 	for (int i = 0; i < v->count; i++) {
 		print_lval(v->cell[i]);
-		putchar(' ');
+		if (i != v->count - 1) putchar(' ');
 	}
 
 	putchar(close);
