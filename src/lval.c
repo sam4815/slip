@@ -99,7 +99,7 @@ lval* extract_lval(lval* v, int i) {
 
 lval* join_lval(lval* x, lval* y) {
 	for (int i = 0; i < y->count; i++) {
-		append_lval(x, pop_lval(y->cell[0], 0));
+		append_lval(x, pop_lval(y, 0));
 	}
 	delete_lval(y);
 	return x;

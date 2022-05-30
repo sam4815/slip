@@ -22,6 +22,7 @@ lval* lval_sexpr(void);
 lval* parse_lval(mpc_ast_t* tree);
 lval* pop_lval(lval* v, int i);
 lval* join_lval(lval* x, lval* y);
+lval* append_lval(lval* parent, lval* child);
 lval* extract_lval(lval* v, int i);
 void delete_lval(lval* v);
 void delete_lvals(int numArgs, ...);

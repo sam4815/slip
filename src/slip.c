@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "../mpc/mpc.h"
 #include "lval.h"
+#include "qexpr_functions.h"
 
 #ifdef _WIN32
 #include <string.h>
@@ -69,61 +70,6 @@ lval* operate(lval* v, char* operation) {
 	return accumulator;
 }
 
-lval* head(lval* v) {
-	LASSERT(v, v->count == 1, "Function 'head' passed too many arguments");
-	LASSERT(v, v->cell[0]->type == LVAL_QEXPR, "Function 'head' passed incorrect type");
-	LASSERT(v, v->cell[0]->count != 0, "Function 'head' passed empty list");
-
-	lval* child = extract_lval(v, 0);
-	while (child->count > 1) {
-		delete_lval(pop_lval(child, 1));
-	}
-	return child;
-}
-
-lval* tail(lval* v) {
-	LASSERT(v, v->count == 1, "Function 'tail' passed too many arguments");
-	LASSERT(v, v->cell[0]->type == LVAL_QEXPR, "Function 'tail' passed incorrect type");
-	LASSERT(v, v->cell[0]->count != 0, "Function 'tail' passed empty list");
-
-	lval* child = extract_lval(v, 0);
-	delete_lval(pop_lval(child, 0));
-	return child;
-}
-
-lval* list(lval* v) {
-	v->type = LVAL_QEXPR;
-	return v;
-}
-
-lval* evaluate_lval(lval* v);
-lval* eval(lval* v) {
-	printf("%c", v->cell[0]->type);
-
-	LASSERT(v, v->count == 1, "Function 'eval' passed too many arguments");
-	// LASSERT(v, v->cell[0]->type == LVAL_QEXPR, "Function 'eval' passed too many arguments");
-
-	lval* child = extract_lval(v, 0);
-	child->type = LVAL_SEXPR;
-	return evaluate_lval(child);
-}
-
-lval* join(lval* v) {
-	for (int i = 0; i < v->count; i++) {
-		LASSERT(v, v->cell[i]->type == LVAL_QEXPR, "Function 'join' passed incorrect type");
-	}
-
-	lval* accumulator = pop_lval(v, 0);
-
-	while (v->count > 0) {
-		join_lval(accumulator, pop_lval(v, 0));
-	};
-
-	delete_lval(v);
-
-	return accumulator;
-}
-
 lval* perform_symbol(lval* v, char* symbol) {
 	if (strstr("+/-*%minmax", symbol)) { return operate(v, symbol); }
 	if (strstr("list", symbol)) { return list(v); }
@@ -131,6 +77,9 @@ lval* perform_symbol(lval* v, char* symbol) {
 	if (strstr("head", symbol)) { return head(v); }
 	if (strstr("tail", symbol)) { return tail(v); }
 	if (strstr("eval", symbol)) { return eval(v); }
+	if (strstr("cons", symbol)) { return cons(v); }
+	if (strstr("len", symbol)) { return len(v); }
+	if (strstr("init", symbol)) { return init(v); }
 
 	delete_lval(v);
 	return lval_err("Unknown symbol");
@@ -169,7 +118,8 @@ int main(int argc, char** argv) {
 	mpca_lang(MPCA_LANG_DEFAULT,
 			"                                                                       \
 			symbol     : '+' | '-' | '*' | '/' | '%' | '^' |  \"min\" | \"max\"     \
-			           | \"head\" | \"tail\" | \"eval\" | \"list\" | \"join\" ;     \
+			           | \"head\" | \"tail\" | \"eval\" | \"list\" | \"join\"       \
+					   | \"init\" | \"len\" | \"cons\" ;                            \
 			number     : /-?[0-9]+/ ;                                               \
 			sexpr      : '(' <expr>* ')' ;                                          \
 			qexpr      : '{' <expr>* '}' ;                                          \
