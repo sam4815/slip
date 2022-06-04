@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "../mpc/mpc.h"
 #include "lval.h"
+#include "lenv.h"
 #include "qexpr_functions.h"
 
 #ifdef _WIN32
@@ -26,7 +27,7 @@ void add_history(char* unused) {}
 #include <editline/readline.h>
 #endif
 
-lval* operate(lval* v, char* operation) {
+lval* operate(lenv* e, lval* v, char* operation) {
 	lval* accumulator = pop_lval(v, 0);
 
 	// If operation is subtract, and there are no
@@ -70,39 +71,59 @@ lval* operate(lval* v, char* operation) {
 	return accumulator;
 }
 
-lval* perform_symbol(lval* v, char* symbol) {
-	if (strstr("+/-*%minmax", symbol)) { return operate(v, symbol); }
-	if (strstr("list", symbol)) { return list(v); }
-	if (strstr("join", symbol)) { return join(v); }
-	if (strstr("head", symbol)) { return head(v); }
-	if (strstr("tail", symbol)) { return tail(v); }
-	if (strstr("eval", symbol)) { return eval(v); }
-	if (strstr("cons", symbol)) { return cons(v); }
-	if (strstr("len", symbol)) { return len(v); }
-	if (strstr("init", symbol)) { return init(v); }
+lval* add(lenv* e, lval* a) { return operate(e, a, "+"); }
+lval* subtract(lenv* e, lval* a) { return operate(e, a, "-"); }
+lval* multiply(lenv* e, lval* a) { return operate(e, a, "*"); }
+lval* divide(lenv* e, lval* a) { return operate(e, a, "/"); }
+lval* modulo(lenv* e, lval* a) { return operate(e, a, "%"); }
+lval* power(lenv* e, lval* a) { return operate(e, a, "^"); }
+lval* maximum(lenv* e, lval* a) { return operate(e, a, "max"); }
+lval* minimum(lenv* e, lval* a) { return operate(e, a, "min"); }
 
-	delete_lval(v);
-	return lval_err("Unknown symbol");
+void set_built_in_functions(lenv* e) {
+	set_func(e, "list", list);
+	set_func(e, "join", join);
+	set_func(e, "head", head);
+	set_func(e, "tail", tail);
+	set_func(e, "eval", eval);
+	set_func(e, "cons", cons);
+	set_func(e, "len", len);
+	set_func(e, "init", init);
+
+	set_func(e, "+", add);
+	set_func(e, "-", subtract);
+	set_func(e, "*", multiply);
+	set_func(e, "/", divide);
+	set_func(e, "%", modulo);
+	set_func(e, "^", power);
+	set_func(e, "min", minimum);
+	set_func(e, "max", maximum);
 }
 
-lval* evaluate_lval(lval* v) {
-	for (int i = 0; i < v->count; i++) {
-		bool is_sexpr = v->cell[i]->type == LVAL_SEXPR;
-		v->cell[i] = is_sexpr ? evaluate_lval(v->cell[i]) : v->cell[i];
-
-		if (v->cell[i]->type == LVAL_ERR) {
-			return extract_lval(v, i);
-		}
+lval* evaluate_lval(lenv* e, lval* v) {
+	// Return corresponding variable
+	if (v->type == LVAL_SYM) {
+		lval* x = get_lval(e, v);
+		delete_lval(v);
+		return x;
 	}
 
+  if (v->type == LVAL_QEXPR) { return v; }
 	if (v->count == 0) { return v; }
 	if (v->count == 1) { return extract_lval(v, 0); }
 
-	LASSERT(v, v->cell[0]->type == LVAL_SYM, "S-expression does not start with a symbol");
-	lval* symLval = pop_lval(v, 0);
+	// Iterate over s-expression and evaluate all children
+	for (int i = 0; i < v->count; i++) {
+		v->cell[i] = evaluate_lval(e, v->cell[i]);
+		if (v->cell[i]->type == LVAL_ERR) { return extract_lval(v, i); }
+	}
 
-	lval* result = perform_symbol(v, symLval->sym);
-	delete_lval(symLval);
+	// Assume v is an s-expression and perform the first child (a function) on the remaining children
+	LASSERT(v, v->cell[0]->type == LVAL_FUNC, "S-expression does not start with a function");
+	lval* func = pop_lval(v, 0);
+
+	lval* result = func->func(e, v);
+	delete_lval(func);
 
 	return result;
 };
@@ -117,9 +138,7 @@ int main(int argc, char** argv) {
 
 	mpca_lang(MPCA_LANG_DEFAULT,
 			"                                                                       \
-			symbol     : '+' | '-' | '*' | '/' | '%' | '^' |  \"min\" | \"max\"     \
-			           | \"head\" | \"tail\" | \"eval\" | \"list\" | \"join\"       \
-					   | \"init\" | \"len\" | \"cons\" ;                            \
+			symbol     : /[a-zA-Z0-9_+\\-*\\/\\\\=<>!&]+/ ;                         \
 			number     : /-?[0-9]+/ ;                                               \
 			sexpr      : '(' <expr>* ')' ;                                          \
 			qexpr      : '{' <expr>* '}' ;                                          \
@@ -129,6 +148,9 @@ int main(int argc, char** argv) {
 			Slip, Sexpression, Qexpression, Expression, Symbol, Number);
 
 	puts("slip v0.1\n");
+
+	lenv* environment = initialize_env();
+	set_built_in_functions(environment);
 
 	while (1) {
 		char* input = readline("slip> ");
@@ -145,7 +167,7 @@ int main(int argc, char** argv) {
 
 		if (getenv("PRINT_TREE")) { mpc_ast_print(result.output); }
 		
-		lval* evaluation = evaluate_lval(parse_lval(result.output));
+		lval* evaluation = evaluate_lval(environment, parse_lval(result.output));
 		println_lval(evaluation);
 
 		free(input);
@@ -157,4 +179,3 @@ int main(int argc, char** argv) {
 	
 	return 0;
 }
-

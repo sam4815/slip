@@ -42,6 +42,13 @@ lval* lval_qexpr(void) {
 	return v;
 }
 
+lval* lval_func(lfunc func) {
+	lval* v = malloc(sizeof(lval));
+	v->type = LVAL_FUNC;
+	v->func = func;
+	return v;
+}
+
 lval* append_lval(lval* parent, lval* child) {
 	parent->count = parent->count + 1;
 	parent->cell = realloc(parent->cell, sizeof(lval*) * parent->count);
@@ -124,6 +131,32 @@ void delete_lval(lval* v) {
 	free(v);
 }
 
+lval* copy_lval(lval* v) {
+	lval* x = malloc(sizeof(lval));
+	x->type = v->type;
+
+	if (v->type == LVAL_NUM) { x->num = v->num; }
+	if (v->type == LVAL_FUNC) { x->func = v->func; }
+	if (v->type == LVAL_SYM) {
+		x->sym = malloc(strlen(v->sym) + 1);
+		strcpy(x->sym, v->sym);
+	}
+	if (v->type == LVAL_ERR) {
+		x->err = malloc(strlen(v->err) + 1);
+		strcpy(x->err, v->err);
+	}
+	if (v->type == LVAL_QEXPR || v->type == LVAL_SEXPR) {
+		x->count = v->count;
+		x->cell = malloc(sizeof(lval) * x->count);
+
+		for (int i = 0; i < x->count; i++) {
+			x->cell[i] = copy_lval(v->cell[i]);
+		}
+	}
+
+	return x;
+}
+
 void delete_lvals(int numArgs, ...) {
 	va_list args;
 	va_start(args, numArgs);
@@ -152,10 +185,10 @@ void print_lval(lval* v) {
 	if (v->type == LVAL_SYM) { printf("%s", v->sym); }
 	if (v->type == LVAL_SEXPR) { print_lval_expr(v, '(', ')'); }
 	if (v->type == LVAL_QEXPR) { print_lval_expr(v, '{', '}'); }
+	if (v->type == LVAL_FUNC) { printf("<function>"); }
 }
 
 void println_lval(lval* v) {
 	print_lval(v);
 	putchar('\n');
 }
-
