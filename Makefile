@@ -1,4 +1,4 @@
-OBJS = slip.o lval.o lenv.o qexpr_functions.o mpc.o
+OBJS = slip.o lval.o lenv.o num_functions.o qexpr_functions.o mpc.o
 CFLAGS = -g -Wall -std=c99
 CC = cc
 LIBS = -ledit
