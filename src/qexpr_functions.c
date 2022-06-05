@@ -3,6 +3,23 @@
 #include "lval.h"
 #include "lenv.h"
 
+lval* def(lenv* e, lval* v) {
+  LASSERT(v, v->cell[0]->type == LVAL_QEXPR, "Function 'def' passed incorrect type");
+  LASSERT(v, v->cell[0]->count != 0, "Function 'def' passed empty list");
+  LASSERT(v, v->count - 1 == v->cell[0]->count, "Function 'def' passed wrong number of arguments");
+
+  lval* syms = v->cell[0];
+
+  for (int i = 0; i < syms->count; i++) {
+    LASSERT(syms, syms->cell[i]->type == LVAL_SYM, "Function 'def' passed incorrect type");
+    set_lval(e, syms->cell[i], v->cell[i + 1]);
+  }
+
+  delete_lval(v);
+
+  return lval_sexpr();
+}
+
 lval* head(lenv* e, lval* v) {
 	LASSERT(v, v->count == 1, "Function 'head' passed too many arguments");
 	LASSERT(v, v->cell[0]->type == LVAL_QEXPR, "Function 'head' passed incorrect type");

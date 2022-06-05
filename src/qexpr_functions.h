@@ -6,3 +6,4 @@ lval* join(lenv* e, lval* v);
 lval* cons(lenv* e, lval* v);
 lval* init(lenv* e, lval* v);
 lval* len(lenv* e, lval* v);
+lval* def(lenv* e, lval* v);

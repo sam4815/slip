@@ -35,8 +35,9 @@ void set_built_in_functions(lenv* e) {
 	set_func(e, "tail", tail);
 	set_func(e, "eval", eval);
 	set_func(e, "cons", cons);
-	set_func(e, "len", len);
 	set_func(e, "init", init);
+	set_func(e, "len", len);
+  set_func(e, "def", def);
 
 	set_func(e, "+", add);
 	set_func(e, "-", subtract);
@@ -48,29 +49,29 @@ void set_built_in_functions(lenv* e) {
 	set_func(e, "max", maximum);
 }
 
-lval* evaluate_lval(lenv* e, lval* v) {
+lval* evaluate_lval(lenv* env, lval* val) {
 	// Return corresponding variable
-	if (v->type == LVAL_SYM) {
-		lval* x = get_lval(e, v);
-		delete_lval(v);
-		return x;
+	if (val->type == LVAL_SYM) {
+		lval* env_val = get_lval(env, val);
+		delete_lval(val);
+		return env_val;
 	}
 
-  if (v->type == LVAL_QEXPR) { return v; }
-	if (v->count == 0) { return v; }
-	if (v->count == 1) { return extract_lval(v, 0); }
+  if (val->type == LVAL_QEXPR) { return val; }
+	if (val->count == 0) { return val; }
+	if (val->count == 1) { return evaluate_lval(env, extract_lval(val, 0)); }
 
 	// Iterate over s-expression and evaluate all children
-	for (int i = 0; i < v->count; i++) {
-		v->cell[i] = evaluate_lval(e, v->cell[i]);
-		if (v->cell[i]->type == LVAL_ERR) { return extract_lval(v, i); }
+	for (int i = 0; i < val->count; i++) {
+		val->cell[i] = evaluate_lval(env, val->cell[i]);
+		if (val->cell[i]->type == LVAL_ERR) { return extract_lval(val, i); }
 	}
 
-	// Assume v is an s-expression and perform the first child (a function) on the remaining children
-	LASSERT(v, v->cell[0]->type == LVAL_FUNC, "S-expression does not start with a function");
-	lval* func = pop_lval(v, 0);
+	// Assume val is an s-expression and perform the first child (a function) on the remaining children
+	LASSERT(val, val->cell[0]->type == LVAL_FUNC, "S-expression does not start with a function");
+	lval* func = pop_lval(val, 0);
 
-	lval* result = func->func(e, v);
+	lval* result = func->func(env, val);
 	delete_lval(func);
 
 	return result;
