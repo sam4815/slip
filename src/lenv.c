@@ -58,3 +58,15 @@ void set_func(lenv* e, char* name, lfunc func) {
 	set_lval(e, sym, val);
 	delete_lvals(2, sym, val);
 }
+
+lval* print_env(lenv* e, lval* v) {
+  ASSERT_NUM_ARGS(v, 0, "env");
+
+  for (int i = 0; i < e->count; i++) {
+    printf("%s=", e->syms[i]);
+    print_lval(e->vals[i]);
+    putchar('\n');
+  }
+
+  return lval_sexpr();
+}

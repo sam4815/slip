@@ -47,6 +47,8 @@ void set_built_in_functions(lenv* e) {
 	set_func(e, "^", power);
 	set_func(e, "min", minimum);
 	set_func(e, "max", maximum);
+
+  set_func(e, "env", print_env);
 }
 
 lval* evaluate_lval(lenv* env, lval* val) {
@@ -59,16 +61,16 @@ lval* evaluate_lval(lenv* env, lval* val) {
 
   if (val->type == LVAL_QEXPR) { return val; }
 	if (val->count == 0) { return val; }
-	if (val->count == 1) { return evaluate_lval(env, extract_lval(val, 0)); }
 
-	// Iterate over s-expression and evaluate all children
+	// Evaluate all children
 	for (int i = 0; i < val->count; i++) {
 		val->cell[i] = evaluate_lval(env, val->cell[i]);
 		if (val->cell[i]->type == LVAL_ERR) { return extract_lval(val, i); }
 	}
 
+  if (val->cell[0]->type != LVAL_FUNC) { return evaluate_lval(env, extract_lval(val, 0)); }
+
 	// Assume val is an s-expression and perform the first child (a function) on the remaining children
-	ASSERT(val, val->cell[0]->type == LVAL_FUNC, "S-expression does not start with a function");
 	lval* func = pop_lval(val, 0);
 
 	lval* result = func->func(env, val);

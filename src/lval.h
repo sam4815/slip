@@ -17,9 +17,9 @@
     "Function '%s' passed incorrect type. Got %s, expected %s.", name, stringify_type(val->cell[index]->type), stringify_type(target));
 
 #define ASSERT_VALID_QEXPR_ARG(name, val) \
+  ASSERT_NUM_ARGS(val, 1, name); \
   ASSERT_CHILD_TYPE(val, LVAL_QEXPR, 0, name); \
-  ASSERT_CHILD_NOT_EMPTY(val, name); \
-  ASSERT_NUM_ARGS(val, 1, name);
+  ASSERT_CHILD_NOT_EMPTY(val, name);
 
 struct lval;
 struct lenv;

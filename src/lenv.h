@@ -11,3 +11,5 @@ lval* get_lval(lenv* e, lval* sym);
 void set_lval(lenv* e, lval* sym, lval* val);
 
 void set_func(lenv* e, char* name, lfunc func);
+
+lval* print_env(lenv* e, lval* v);
