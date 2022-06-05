@@ -4,6 +4,7 @@
 #include "lenv.h"
 
 lval* operate(lenv* e, lval* v, char* operation) {
+  ASSERT_CHILD_TYPE(v, LVAL_NUM, 0, operation);
 	lval* accumulator = pop_lval(v, 0);
 
 	// If operation is subtract, and there are no
@@ -13,13 +14,8 @@ lval* operate(lenv* e, lval* v, char* operation) {
 	}
 
 	while (v->count != 0) {
+    ASSERT_CHILD_TYPE(v, LVAL_NUM, 0, operation);
 		lval* next_lval = pop_lval(v, 0);
-
-		if (accumulator->type != LVAL_NUM || next_lval->type != LVAL_NUM) {
-			delete_lvals(2, accumulator, next_lval);
-			accumulator = lval_err("Cannot operate on non-number");
-			break;
-		}
 
 		int x = accumulator->num;
 		int y = next_lval->num;
@@ -27,7 +23,7 @@ lval* operate(lenv* e, lval* v, char* operation) {
 		// Catch division by zero error
 		if (strcmp(operation, "/") == 0 && y == 0) {
 			delete_lvals(2, accumulator, next_lval);
-			accumulator = lval_err("Can't divide by 0");
+			accumulator = lval_err("Can't divide by 0.");
 			break;
 		}
 

@@ -31,7 +31,7 @@ lval* get_lval(lenv* e, lval* sym) {
 		}
 	}
 
-	return lval_err("Symbol not found");
+	return lval_err("Symbol '%s' not found", sym->sym);
 }
 
 void set_lval(lenv* e, lval* sym, lval* val) {

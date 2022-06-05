@@ -10,11 +10,19 @@ lval* lval_num(long num) {
 	return v;
 }
 
-lval* lval_err(char* err) {
-	lval* v = malloc(sizeof(lval));
+lval* lval_err(char* fmt, ...) {
+  lval* v = malloc(sizeof(lval));
 	v->type = LVAL_ERR;
-	v->err = malloc(strlen(err) + 1);
-	strcpy(v->err, err);
+
+  va_list args;
+	va_start(args, fmt);
+
+	v->err = malloc(512);
+  vsnprintf(v->err, 511, fmt, args);
+  v->err = realloc(v->err, strlen(v->err) + 1);
+
+	va_end(args);
+
 	return v;
 }
 
@@ -168,6 +176,18 @@ void delete_lvals(int numArgs, ...) {
 	va_end(args);
 }
 
+char* stringify_type(int t) {
+  switch(t) {
+    case LVAL_NUM: return "number";
+    case LVAL_ERR: return "error";
+    case LVAL_SEXPR: return "s-expression";
+    case LVAL_QEXPR: return "q-expression";
+    case LVAL_SYM: return "symbol";
+    case LVAL_FUNC: return "function";
+    default: return "unknown type";
+  }
+}
+
 void print_lval_expr(lval* v, char open, char close) {
 	putchar(open);
 
@@ -189,6 +209,7 @@ void print_lval(lval* v) {
 }
 
 void println_lval(lval* v) {
+  printf("\033[33m");
 	print_lval(v);
-	putchar('\n');
+	printf("\033[0m\n");
 }

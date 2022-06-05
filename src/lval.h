@@ -1,5 +1,25 @@
-#define LASSERT(args, cond, err) \
-	if (!(cond)) { delete_lval(args); return lval_err(err); }
+#define ASSERT(val, cond, fmt, ...) \
+	if (!(cond)) { lval* err = lval_err(fmt, ##__VA_ARGS__); delete_lval(val); return err; }
+
+#define ASSERT_NUM_ARGS(val, num, name) \
+  ASSERT(val, val->count == num, \
+    "Function '%s' passed incorrect number of arguments. Got %i, expected %i.", name, val->count, num);
+
+#define ASSERT_TYPE(val, target, name) \
+  ASSERT(val, val->type == target, \
+    "Function '%s' passed incorrect type. Got %s, expected %s.", name, stringify_type(val->type), stringify_type(target));
+
+#define ASSERT_CHILD_NOT_EMPTY(val, name) \
+  ASSERT(val, val->cell[0]->count != 0, "Function '%s' passed empty list.", name);
+
+#define ASSERT_CHILD_TYPE(val, target, index, name) \
+  ASSERT(val, val->cell[index]->type == target, \
+    "Function '%s' passed incorrect type. Got %s, expected %s.", name, stringify_type(val->cell[index]->type), stringify_type(target));
+
+#define ASSERT_VALID_QEXPR_ARG(name, val) \
+  ASSERT_CHILD_TYPE(val, LVAL_QEXPR, 0, name); \
+  ASSERT_CHILD_NOT_EMPTY(val, name); \
+  ASSERT_NUM_ARGS(val, 1, name);
 
 struct lval;
 struct lenv;
@@ -23,7 +43,7 @@ struct lval {
 };
 
 lval* lval_num(long num);
-lval* lval_err(char* err);
+lval* lval_err(char* fmt, ...);
 lval* lval_sym(char* sym);
 lval* lval_sexpr(void);
 lval* lval_func(lfunc func);
@@ -36,6 +56,8 @@ lval* extract_lval(lval* v, int i);
 lval* copy_lval(lval* v);
 void delete_lval(lval* v);
 void delete_lvals(int numArgs, ...);
+
+char* stringify_type(int type);
 
 void print_lval_expr(lval* v, char open, char close);
 void print_lval(lval* v);

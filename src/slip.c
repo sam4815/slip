@@ -68,7 +68,7 @@ lval* evaluate_lval(lenv* env, lval* val) {
 	}
 
 	// Assume val is an s-expression and perform the first child (a function) on the remaining children
-	LASSERT(val, val->cell[0]->type == LVAL_FUNC, "S-expression does not start with a function");
+	ASSERT(val, val->cell[0]->type == LVAL_FUNC, "S-expression does not start with a function");
 	lval* func = pop_lval(val, 0);
 
 	lval* result = func->func(env, val);
@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
 	set_built_in_functions(environment);
 
 	while (1) {
-		char* input = readline("slip> ");
+		char* input = readline("\033[32mslip>\033[0m ");
 		add_history(input);
 
 		mpc_result_t result;

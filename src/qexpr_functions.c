@@ -4,14 +4,14 @@
 #include "lenv.h"
 
 lval* def(lenv* e, lval* v) {
-  LASSERT(v, v->cell[0]->type == LVAL_QEXPR, "Function 'def' passed incorrect type");
-  LASSERT(v, v->cell[0]->count != 0, "Function 'def' passed empty list");
-  LASSERT(v, v->count - 1 == v->cell[0]->count, "Function 'def' passed wrong number of arguments");
+	ASSERT_CHILD_TYPE(v, LVAL_QEXPR, 0, "def");
+  ASSERT_CHILD_NOT_EMPTY(v, "def");
+  ASSERT_NUM_ARGS(v, v->cell[0]->count + 1, "def");
 
   lval* syms = v->cell[0];
 
   for (int i = 0; i < syms->count; i++) {
-    LASSERT(syms, syms->cell[i]->type == LVAL_SYM, "Function 'def' passed incorrect type");
+    ASSERT_CHILD_TYPE(syms, LVAL_SYM, i, "def");
     set_lval(e, syms->cell[i], v->cell[i + 1]);
   }
 
@@ -21,9 +21,7 @@ lval* def(lenv* e, lval* v) {
 }
 
 lval* head(lenv* e, lval* v) {
-	LASSERT(v, v->count == 1, "Function 'head' passed too many arguments");
-	LASSERT(v, v->cell[0]->type == LVAL_QEXPR, "Function 'head' passed incorrect type");
-	LASSERT(v, v->cell[0]->count != 0, "Function 'head' passed empty list");
+	ASSERT_VALID_QEXPR_ARG("head", v);
 
 	lval* child = extract_lval(v, 0);
 	while (child->count > 1) {
@@ -33,9 +31,7 @@ lval* head(lenv* e, lval* v) {
 }
 
 lval* tail(lenv* e, lval* v) {
-	LASSERT(v, v->count == 1, "Function 'tail' passed too many arguments");
-	LASSERT(v, v->cell[0]->type == LVAL_QEXPR, "Function 'tail' passed incorrect type");
-	LASSERT(v, v->cell[0]->count != 0, "Function 'tail' passed empty list");
+	ASSERT_VALID_QEXPR_ARG("tail", v);
 
 	lval* child = extract_lval(v, 0);
 	delete_lval(pop_lval(child, 0));
@@ -49,10 +45,8 @@ lval* list(lenv* e, lval* v) {
 
 lval* evaluate_lval(lenv* e, lval* v);
 lval* eval(lenv* e, lval* v) {
-	printf("%c", v->cell[0]->type);
-
-	LASSERT(v, v->count == 1, "Function 'eval' passed too many arguments");
-	LASSERT(v, v->cell[0]->type == LVAL_QEXPR, "Function 'eval' passed incorrect type");
+	ASSERT_NUM_ARGS(v, 1, "eval");
+	ASSERT_CHILD_TYPE(v, LVAL_QEXPR, 0, "eval");
 
 	lval* child = extract_lval(v, 0);
 	child->type = LVAL_SEXPR;
@@ -61,7 +55,7 @@ lval* eval(lenv* e, lval* v) {
 
 lval* join(lenv* e, lval* v) {
 	for (int i = 0; i < v->count; i++) {
-		LASSERT(v, v->cell[i]->type == LVAL_QEXPR, "Function 'join' passed incorrect type");
+    ASSERT_CHILD_TYPE(v, LVAL_QEXPR, i, "join");
 	}
 
 	lval* accumulator = pop_lval(v, 0);
@@ -76,8 +70,8 @@ lval* join(lenv* e, lval* v) {
 }
 
 lval* cons(lenv* e, lval* v) {
-	LASSERT(v, v->count == 2, "Function 'cons' passed wrong number of arguments");
-	LASSERT(v, v->cell[1]->type == LVAL_QEXPR, "Function 'cons' passed incorrect type");
+  ASSERT_NUM_ARGS(v, 2, "cons");
+  ASSERT_CHILD_TYPE(v, LVAL_QEXPR, 1, "cons");
 	
 	lval* value_to_append = pop_lval(v, 0);
 	lval* qexpr = pop_lval(v, 0);
@@ -89,8 +83,8 @@ lval* cons(lenv* e, lval* v) {
 }
 
 lval* len(lenv* e, lval* v) {
-	LASSERT(v, v->count == 1, "Function 'len' passed too many arguments");
-	LASSERT(v, v->cell[0]->type == LVAL_QEXPR, "Function 'len' passed incorrect type");
+  ASSERT_NUM_ARGS(v, 1, "len");
+  ASSERT_CHILD_TYPE(v, LVAL_QEXPR, 0, "len");
 
 	lval* length = lval_num(v->cell[0]->count);
 	delete_lval(v);
@@ -99,8 +93,8 @@ lval* len(lenv* e, lval* v) {
 }
 
 lval* init(lenv* e, lval* v) {
-	LASSERT(v, v->count == 1, "Function 'len' passed too many arguments");
-	LASSERT(v, v->cell[0]->type == LVAL_QEXPR, "Function 'len' passed incorrect type");
+  ASSERT_NUM_ARGS(v, 1, "init");
+  ASSERT_CHILD_TYPE(v, LVAL_QEXPR, 0, "init");
 	
 	lval* child = extract_lval(v, 0);
 	delete_lval(pop_lval(child, child->count - 1));
