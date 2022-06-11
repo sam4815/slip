@@ -64,12 +64,42 @@ lval* call_lval(lenv* env, lval* func, lval* arguments) {
       "Function passed too many arguments. Got %i, expected %i.", num_args_given, num_args_expected);
 
     lval* sym = pop_lval(func->arguments, 0);
+
+    // Special case to deal with symbol for variable number of arguments ("&")
+    if (strcmp(sym->sym, "&") == 0) {
+      if (func->arguments->count != 1) {
+        delete_lvals(2, arguments, sym);
+        return lval_err("Invalid function format. Must follow & with at least one symbol.");
+      }
+
+      lval* remaining_args_sym = pop_lval(func->arguments, 0);
+      set_lval(func->env, remaining_args_sym, list(env, arguments));
+      delete_lvals(2, sym, remaining_args_sym);
+      break;
+    }
+
     lval* val = pop_lval(arguments, 0);
+
     set_lval(func->env, sym, val);
     delete_lvals(2, sym, val);
   }
 
   delete_lval(arguments);
+
+  // If & remains in list of expected function arguments, bind to empty list
+  if (func->arguments->count > 0 && strstr(func->arguments->cell[0]->sym, "&")) {
+    if (func->arguments->count != 2) {
+      return lval_err("Invalid function format. Must follow & with at least one symbol.");
+    }
+
+    delete_lval(pop_lval(func->arguments, 0));
+
+    lval* sym = pop_lval(func->arguments, 0);
+    lval* val = lval_sexpr();
+
+    set_lval(func->env, sym, val);
+    delete_lvals(2, sym, val);
+  }
 
   // If there are remaining arguments to be bound, return partial
   if (func->arguments->count > 0) { return copy_lval(func); }
@@ -88,8 +118,7 @@ lval* evaluate_lval(lenv* env, lval* val) {
 		return env_val;
 	}
 
-  if (val->type == LVAL_QEXPR) { return val; }
-	if (!val->count) { return val; }
+  if (val->type != LVAL_SEXPR) { return val; }
 
 	// Evaluate all children
 	for (int i = 0; i < val->count; i++) {
