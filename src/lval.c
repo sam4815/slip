@@ -127,7 +127,8 @@ lval* extract_lval(lval* v, int i) {
 }
 
 lval* join_lval(lval* x, lval* y) {
-	for (int i = 0; i < y->count; i++) {
+  int count = y->count;
+	for (int i = 0; i < count; i++) {
 		append_lval(x, pop_lval(y, 0));
 	}
 	delete_lval(y);
