@@ -3,21 +3,43 @@
 #include "lval.h"
 #include "lenv.h"
 
-lval* def(lenv* e, lval* v) {
-	ASSERT_CHILD_TYPE(v, LVAL_QEXPR, 0, "def");
-  ASSERT_CHILD_NOT_EMPTY(v, "def");
-  ASSERT_NUM_ARGS(v, v->cell[0]->count + 1, "def");
+lval* global_def(lenv* e, lval* v) {
+	ASSERT_VALID_DEF(v, "def");
 
   lval* syms = v->cell[0];
-
   for (int i = 0; i < syms->count; i++) {
     ASSERT_CHILD_TYPE(syms, LVAL_SYM, i, "def");
+    set_global_lval(e, syms->cell[i], v->cell[i + 1]);
+  }
+
+  delete_lval(v);
+  return lval_sexpr();
+}
+
+lval* local_def(lenv* e, lval* v) {
+	ASSERT_VALID_DEF(v, "=");
+
+  lval* syms = v->cell[0];
+  for (int i = 0; i < syms->count; i++) {
+    ASSERT_CHILD_TYPE(syms, LVAL_SYM, i, "=");
     set_lval(e, syms->cell[i], v->cell[i + 1]);
   }
 
   delete_lval(v);
-
   return lval_sexpr();
+}
+
+lval* lambda(lenv* e, lval* v) {
+  ASSERT_NUM_ARGS(v, 2, "lambda");
+  ASSERT_CHILD_TYPE(v, LVAL_QEXPR, 0, "lambda");
+  ASSERT_CHILD_TYPE(v, LVAL_QEXPR, 1, "lambda");
+
+  lval* arguments = pop_lval(v, 0);
+  lval* body = pop_lval(v, 0);
+
+  delete_lval(v);
+
+  return lval_lambda(arguments, body);
 }
 
 lval* head(lenv* e, lval* v) {

@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include "../mpc/mpc.h"
 #include "lval.h"
+#include "lenv.h"
 
 lval* lval_num(long num) {
 	lval* v = malloc(sizeof(lval));
@@ -55,6 +56,19 @@ lval* lval_func(lfunc func) {
 	v->type = LVAL_FUNC;
 	v->func = func;
 	return v;
+}
+
+lval* lval_lambda(lval* arguments, lval* body) {
+  lval* v = malloc(sizeof(lval));
+  v->type = LVAL_FUNC;
+  v->func = NULL;
+
+  v->env = initialize_env();
+
+  v->arguments = arguments;
+  v->body = body;
+
+  return v;
 }
 
 lval* append_lval(lval* parent, lval* child) {
@@ -136,6 +150,12 @@ void delete_lval(lval* v) {
 		free(v->cell);
 	}
 
+  // If user-defined lambda
+  if (v->type == LVAL_FUNC && v->func == NULL) {
+    delete_env(v->env);
+    delete_lvals(2, v->arguments, v->body);
+  }
+
 	free(v);
 }
 
@@ -144,15 +164,25 @@ lval* copy_lval(lval* v) {
 	x->type = v->type;
 
 	if (v->type == LVAL_NUM) { x->num = v->num; }
-	if (v->type == LVAL_FUNC) { x->func = v->func; }
+
 	if (v->type == LVAL_SYM) {
 		x->sym = malloc(strlen(v->sym) + 1);
 		strcpy(x->sym, v->sym);
 	}
+
 	if (v->type == LVAL_ERR) {
 		x->err = malloc(strlen(v->err) + 1);
 		strcpy(x->err, v->err);
 	}
+
+	if (v->type == LVAL_FUNC && v->func != NULL) { x->func = v->func; }
+  if (v->type == LVAL_FUNC && v->func == NULL) {
+    x->func = NULL;
+    x->env = copy_env(v->env);
+    x->arguments = copy_lval(v->arguments);
+    x->body = copy_lval(v->body);
+  }
+
 	if (v->type == LVAL_QEXPR || v->type == LVAL_SEXPR) {
 		x->count = v->count;
 		x->cell = malloc(sizeof(lval) * x->count);
@@ -199,13 +229,22 @@ void print_lval_expr(lval* v, char open, char close) {
 	putchar(close);
 }
 
+void print_lambda(lval* v) {
+  printf("(\\ ");
+  print_lval(v->arguments);
+  putchar(' ');
+  print_lval(v->body);
+  putchar(')');
+}
+
 void print_lval(lval* v) {
 	if (v->type == LVAL_NUM) { printf("%li", v->num); }
 	if (v->type == LVAL_ERR) { printf("%s", v->err); }
 	if (v->type == LVAL_SYM) { printf("%s", v->sym); }
 	if (v->type == LVAL_SEXPR) { print_lval_expr(v, '(', ')'); }
 	if (v->type == LVAL_QEXPR) { print_lval_expr(v, '{', '}'); }
-	if (v->type == LVAL_FUNC) { printf("<function>"); }
+	if (v->type == LVAL_FUNC && v->func != NULL) { printf("<built_in_function>"); }
+	if (v->type == LVAL_FUNC && v->func == NULL) { print_lambda(v); }
 }
 
 void println_lval(lval* v) {

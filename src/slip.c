@@ -37,7 +37,9 @@ void set_built_in_functions(lenv* e) {
 	set_func(e, "cons", cons);
 	set_func(e, "init", init);
 	set_func(e, "len", len);
-  set_func(e, "def", def);
+  set_func(e, "def", global_def);
+  set_func(e, "=", local_def);
+  set_func(e, "\\", lambda);
 
 	set_func(e, "+", add);
 	set_func(e, "-", subtract);
@@ -51,6 +53,33 @@ void set_built_in_functions(lenv* e) {
   set_func(e, "env", print_env);
 }
 
+lval* call_lval(lenv* env, lval* func, lval* arguments) {
+  if (func->func) { return func->func(env, arguments); }
+
+  int num_args_given = arguments->count;
+  int num_args_expected = func->arguments->count;
+
+  while (arguments->count) {
+    ASSERT(arguments, func->arguments->count > 0,
+      "Function passed too many arguments. Got %i, expected %i.", num_args_given, num_args_expected);
+
+    lval* sym = pop_lval(func->arguments, 0);
+    lval* val = pop_lval(arguments, 0);
+    set_lval(func->env, sym, val);
+    delete_lvals(2, sym, val);
+  }
+
+  delete_lval(arguments);
+
+  // If there are remaining arguments to be bound, return partial
+  if (func->arguments->count > 0) { return copy_lval(func); }
+
+  // Else set function's parent environment to current environment,
+  // append a copy of the body to a sexpr, then evaluate it
+  func->env->parent = env;
+  return eval(func->env, append_lval(lval_sexpr(), copy_lval(func->body)));
+}
+
 lval* evaluate_lval(lenv* env, lval* val) {
 	// Return corresponding variable
 	if (val->type == LVAL_SYM) {
@@ -60,7 +89,7 @@ lval* evaluate_lval(lenv* env, lval* val) {
 	}
 
   if (val->type == LVAL_QEXPR) { return val; }
-	if (val->count == 0) { return val; }
+	if (!val->count) { return val; }
 
 	// Evaluate all children
 	for (int i = 0; i < val->count; i++) {
@@ -68,14 +97,14 @@ lval* evaluate_lval(lenv* env, lval* val) {
 		if (val->cell[i]->type == LVAL_ERR) { return extract_lval(val, i); }
 	}
 
+  // If the first child isn't a function, just extract and return the evaluated first child
   if (val->cell[0]->type != LVAL_FUNC) { return evaluate_lval(env, extract_lval(val, 0)); }
 
 	// Assume val is an s-expression and perform the first child (a function) on the remaining children
 	lval* func = pop_lval(val, 0);
+	lval* result = call_lval(env, func, val);
 
-	lval* result = func->func(env, val);
 	delete_lval(func);
-
 	return result;
 };
 

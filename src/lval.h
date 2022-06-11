@@ -21,6 +21,11 @@
   ASSERT_CHILD_TYPE(val, LVAL_QEXPR, 0, name); \
   ASSERT_CHILD_NOT_EMPTY(val, name);
 
+#define ASSERT_VALID_DEF(name, val) \
+  ASSERT_CHILD_TYPE(v, LVAL_QEXPR, 0, "def"); \
+  ASSERT_CHILD_NOT_EMPTY(v, "def"); \
+  ASSERT_NUM_ARGS(v, v->cell[0]->count + 1, "def");
+
 struct lval;
 struct lenv;
 typedef struct lenv lenv;
@@ -32,12 +37,21 @@ enum { LVAL_NUM, LVAL_ERR, LVAL_SEXPR, LVAL_QEXPR, LVAL_SYM, LVAL_FUNC };
 
 struct lval {
 	int type;
-	long num;
 
+  // Primitives
+	long num;
 	char* err;
 	char* sym;
+
+  // Built-in functions
 	lfunc func;
 
+  // User-defined functions
+  lenv* env;
+  lval* arguments;
+  lval* body;
+
+  // Expressions
 	int count;
 	struct lval** cell;
 };
@@ -47,6 +61,7 @@ lval* lval_err(char* fmt, ...);
 lval* lval_sym(char* sym);
 lval* lval_sexpr(void);
 lval* lval_func(lfunc func);
+lval* lval_lambda(lval* arguments, lval* body);
 
 lval* parse_lval(mpc_ast_t* tree);
 lval* pop_lval(lval* v, int i);
