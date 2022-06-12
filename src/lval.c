@@ -85,7 +85,7 @@ lval* parse_lval_num(mpc_ast_t* tree) {
 }
 
 lval* parse_lval(mpc_ast_t* tree) {
-	lval* parsed_lval = NULL;
+	lval* parsed_lval = lval_sexpr();
 
 	if (strstr(tree->tag, "number")) { parsed_lval = parse_lval_num(tree); }
 	if (strstr(tree->tag, "symbol")) { parsed_lval = lval_sym(tree->contents); }
@@ -249,7 +249,9 @@ void print_lval(lval* v) {
 }
 
 void println_lval(lval* v) {
-  printf("\033[33m");
+  if (v->type == LVAL_SEXPR && v->count == 0) { return; }
+
+  printf("\033[1;93m");
 	print_lval(v);
 	printf("\033[0m\n");
 }

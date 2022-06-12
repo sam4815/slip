@@ -118,7 +118,7 @@ lval* evaluate_lval(lenv* env, lval* val) {
 		return env_val;
 	}
 
-  if (val->type != LVAL_SEXPR) { return val; }
+  if (val->type != LVAL_SEXPR || val->count == 0) { return val; }
 
 	// Evaluate all children
 	for (int i = 0; i < val->count; i++) {
@@ -162,8 +162,8 @@ int main(int argc, char** argv) {
 	set_built_in_functions(environment);
 
 	while (1) {
-		char* input = readline("\033[32mslip>\033[0m ");
-		add_history(input);
+		char* input = readline("🍂 ");
+		if (strlen(input) > 0) { add_history(input); }
 
 		mpc_result_t result;
 		bool success = mpc_parse("<stdin>", input, Slip, &result);
@@ -184,6 +184,7 @@ int main(int argc, char** argv) {
 		mpc_ast_delete(result.output);
 	}
 
+  delete_env(environment);
 	mpc_cleanup(6, Slip, Sexpression, Qexpression, Expression, Symbol, Number);
 	
 	return 0;
