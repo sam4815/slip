@@ -137,6 +137,17 @@ lval* evaluate_lval(lenv* env, lval* val) {
 	return result;
 };
 
+void execute_code(mpc_parser_t* Slip, lenv* e, char* code) {
+  mpc_result_t result;
+	mpc_parse("input", code, Slip, &result);
+  evaluate_lval(e, parse_lval(result.output));
+}
+
+void build_library(mpc_parser_t* Slip, lenv* e) {
+  execute_code(Slip, e,
+    "def {fun} (\\ {args body} {def (head args) (\\ (tail args) body)})");
+}
+
 int main(int argc, char** argv) {
 	mpc_parser_t* Slip = mpc_new("slip");
 	mpc_parser_t* Expression = mpc_new("expr");
@@ -160,6 +171,7 @@ int main(int argc, char** argv) {
 
 	lenv* environment = initialize_env();
 	set_built_in_functions(environment);
+  build_library(Slip, environment);
 
 	while (1) {
 		char* input = readline("🍂 ");
