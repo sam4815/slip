@@ -73,6 +73,7 @@ void delete_lval(lval* v);
 void delete_lvals(int numArgs, ...);
 
 char* stringify_type(int type);
+char* stringify_lval(lval* v);
 
 void print_lval_expr(lval* v, char open, char close);
 void print_lval(lval* v);

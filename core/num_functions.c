@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../mpc/mpc.h"
+#include "mpc/mpc.h"
 #include "lval.h"
 #include "lenv.h"
 

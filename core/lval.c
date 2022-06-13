@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdarg.h>
-#include "../mpc/mpc.h"
+#include <string.h>
+#include "mpc/mpc.h"
 #include "lval.h"
 #include "lenv.h"
 
@@ -219,39 +220,61 @@ char* stringify_type(int t) {
   }
 }
 
-void print_lval_expr(lval* v, char open, char close) {
-	putchar(open);
+char* stringify_lambda(lval* v) {
+  char* arguments_str = stringify_lval(v->arguments);
+  char* body_str = stringify_lval(v->body);
+
+  char* result = malloc(strlen(arguments_str) + strlen(body_str) + 4);
+  strcpy(result, arguments_str);
+  strcat(result, " (");
+  strcat(result, body_str);
+  strcat(result, ")");
+
+  return result;
+}
+
+char* stringify_lval_expression(lval* v, char* open, char* close) {
+  char* result = malloc(strlen(open) + 1);
+  strcpy(result, open);
 
 	for (int i = 0; i < v->count; i++) {
-		print_lval(v->cell[i]);
-		if (i != v->count - 1) putchar(' ');
+    char* child_string = stringify_lval(v->cell[i]);
+    result = realloc(result, strlen(result) + strlen(child_string) + 1);
+    strcat(result, child_string);
+
+		if (i != v->count - 1) {
+      result = realloc(result, strlen(result) + 2);
+      strcat(result, " ");
+    }
 	}
 
-	putchar(close);
+	result = realloc(result, strlen(result) + strlen(close) + 1);
+  strcat(result, close);
+
+  return result;
 }
 
-void print_lambda(lval* v) {
-  printf("(\\ ");
-  print_lval(v->arguments);
-  putchar(' ');
-  print_lval(v->body);
-  putchar(')');
-}
+char* stringify_lval(lval* v) {
+	if (v->type == LVAL_NUM) {
+    char* c = malloc(32);
+    sprintf(c, "%li", v->num);
+    return c;
+  }
 
-void print_lval(lval* v) {
-	if (v->type == LVAL_NUM) { printf("%li", v->num); }
-	if (v->type == LVAL_ERR) { printf("%s", v->err); }
-	if (v->type == LVAL_SYM) { printf("%s", v->sym); }
-	if (v->type == LVAL_SEXPR) { print_lval_expr(v, '(', ')'); }
-	if (v->type == LVAL_QEXPR) { print_lval_expr(v, '{', '}'); }
-	if (v->type == LVAL_FUNC && v->func != NULL) { printf("<built_in_function>"); }
-	if (v->type == LVAL_FUNC && v->func == NULL) { print_lambda(v); }
-}
+  if (v->type == LVAL_ERR) { return v->err; }
+  if (v->type == LVAL_SYM) { return v->sym; }
 
-void println_lval(lval* v) {
-  if (v->type == LVAL_SEXPR && v->count == 0) { return; }
+  if (v->type == LVAL_FUNC && v->func != NULL) {
+    char* c = malloc(20);
+    sprintf(c, "<built_in_function>");
+    return c;
+  }
 
-  printf("\033[1;93m");
-	print_lval(v);
-	printf("\033[0m\n");
+	if (v->type == LVAL_SEXPR) { return stringify_lval_expression(v, "(", ")"); }
+	if (v->type == LVAL_QEXPR) { return stringify_lval_expression(v, "{", "}"); }	
+	if (v->type == LVAL_FUNC && v->func == NULL) { return stringify_lambda(v); }
+
+  char* c = malloc(21);
+  sprintf(c, "Unable to stringify.");
+  return c;
 }

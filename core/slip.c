@@ -2,31 +2,12 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdbool.h>
-#include "../mpc/mpc.h"
+#include "mpc/mpc.h"
 #include "lval.h"
 #include "lenv.h"
 #include "qexpr_functions.h"
 #include "num_functions.h"
-
-#ifdef _WIN32
-#include <string.h>
-
-static char buffer[2048];
-
-char* readline(char* prompt) {
-	fputs(prompt, stdout);
-	fgets(buffer, 2048, stdin);
-	char* cpy = malloc(strlen(buffer) + 1);
-	strcpy(cpy, buffer);
-	cpy[strlen(copy) - 1] = '\0';
-	return cpy;
-}
-
-void add_history(char* unused) {}
-
-#else
-#include <editline/readline.h>
-#endif
+#include "slip.h"
 
 void set_built_in_functions(lenv* e) {
 	set_func(e, "list", list);
@@ -49,8 +30,6 @@ void set_built_in_functions(lenv* e) {
 	set_func(e, "^", power);
 	set_func(e, "min", minimum);
 	set_func(e, "max", maximum);
-
-  set_func(e, "env", print_env);
 }
 
 lval* call_lval(lenv* env, lval* func, lval* arguments) {
@@ -148,8 +127,28 @@ void build_library(mpc_parser_t* Slip, lenv* e) {
     "def {fun} (\\ {args body} {def (head args) (\\ (tail args) body)})");
 }
 
-int main(int argc, char** argv) {
-	mpc_parser_t* Slip = mpc_new("slip");
+void destroy_slip(mpc_parser_t* Parser, lenv* e) {
+  delete_env(e);
+	mpc_cleanup(1, Parser);
+}
+
+char* evaluate_string(mpc_parser_t* Parser, lenv* e, char* input) {
+  mpc_result_t result;
+	mpc_parse("input", input, Parser, &result);
+
+  lval* evaluation = evaluate_lval(e, parse_lval(result.output));
+  char* evaluation_string = stringify_lval(evaluation);
+
+  delete_lval(evaluation);
+  mpc_ast_delete(result.output);
+
+  return evaluation_string;
+}
+
+slip* initialize_slip(void) {
+  slip* slip_instance = malloc(sizeof(slip));
+
+	mpc_parser_t* Parser = mpc_new("slip");
 	mpc_parser_t* Expression = mpc_new("expr");
 	mpc_parser_t* Sexpression = mpc_new("sexpr");
 	mpc_parser_t* Qexpression = mpc_new("qexpr");
@@ -165,39 +164,16 @@ int main(int argc, char** argv) {
 			expr       : <number> | <sexpr> | <qexpr> | <symbol> ;                  \
 			slip	   : /^/ <expr>* /$/ ;                                          \
 			",
-			Slip, Sexpression, Qexpression, Expression, Symbol, Number);
-
-	puts("slip v0.1\n");
+			Parser, Sexpression, Qexpression, Expression, Symbol, Number);
 
 	lenv* environment = initialize_env();
 	set_built_in_functions(environment);
-  build_library(Slip, environment);
+  build_library(Parser, environment);
 
-	while (1) {
-		char* input = readline("🍂 ");
-		if (strlen(input) > 0) { add_history(input); }
-
-		mpc_result_t result;
-		bool success = mpc_parse("<stdin>", input, Slip, &result);
-
-		if (!success) {
-			mpc_err_print(result.error);
-			free(input);
-			continue;
-		}
-
-		if (getenv("PRINT_TREE")) { mpc_ast_print(result.output); }
-		
-		lval* evaluation = evaluate_lval(environment, parse_lval(result.output));
-		println_lval(evaluation);
-
-		free(input);
-		delete_lval(evaluation);
-		mpc_ast_delete(result.output);
-	}
-
-  delete_env(environment);
-	mpc_cleanup(6, Slip, Sexpression, Qexpression, Expression, Symbol, Number);
+  slip_instance->parser = Parser;
+  slip_instance->environment = environment;
+  slip_instance->evaluate_string = evaluate_string;
+  slip_instance->destroy = destroy_slip;
 	
-	return 0;
+	return slip_instance;
 }

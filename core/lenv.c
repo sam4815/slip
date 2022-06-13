@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "../mpc/mpc.h"
+#include "mpc/mpc.h"
 #include "lval.h"
 #include "lenv.h"
 
@@ -85,16 +85,4 @@ void set_func(lenv* e, char* name, lfunc func) {
 	set_lval(e, sym, val);
 	delete_lval(sym);
   delete_lval(val);
-}
-
-lval* print_env(lenv* e, lval* v) {
-  ASSERT_NUM_ARGS(v, 0, "env");
-
-  for (int i = 0; i < e->count; i++) {
-    printf("%s=", e->syms[i]);
-    print_lval(e->vals[i]);
-    putchar('\n');
-  }
-
-  return lval_sexpr();
 }
