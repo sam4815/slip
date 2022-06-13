@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include "mpc/mpc.h"
 #include "lval_definitions.h"
 #include "lval_operations.h"
