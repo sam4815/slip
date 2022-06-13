@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "mpc/mpc.h"
-#include "lval.h"
-#include "lenv.h"
+#include "lval_definitions.h"
+#include "lval_operations.h"
+#include "environment.h"
 
 lenv* initialize_env(void) {
 	lenv* env = malloc(sizeof(lenv));
@@ -79,7 +80,7 @@ void set_global_lval(lenv* env, lval* sym, lval* val) {
   set_lval_on_env(env, sym, val);
 }
 
-void set_func(lenv* env, char* name, lfunc func) {
+void set_func_on_env(lenv* env, char* name, lfunc func) {
 	lval* sym = lval_sym(name);
 	lval* val = lval_func(func);
   set_lval_on_env(env, sym, val);

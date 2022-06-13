@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include "mpc/mpc.h"
-#include "lval.h"
-#include "lenv.h"
+#include "lval_definitions.h"
+#include "lval_operations.h"
+#include "assert.h"
+#include "stringify.h"
+#include "environment.h"
+#include "numbers.h"
 
 lval* operate(lenv* e, lval* v, char* operation) {
   ASSERT_CHILD_TYPE(v, LVAL_NUM, 0, operation);

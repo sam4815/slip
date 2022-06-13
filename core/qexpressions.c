@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include "mpc/mpc.h"
-#include "lval.h"
-#include "lenv.h"
+#include "lval_definitions.h"
+#include "lval_operations.h"
+#include "stringify.h"
+#include "assert.h"
+#include "environment.h"
 
 lval* global_def(lenv* e, lval* v) {
 	ASSERT_VALID_DEF(v, "def");
@@ -27,19 +30,6 @@ lval* local_def(lenv* e, lval* v) {
 
   delete_lval(v);
   return lval_sexpr();
-}
-
-lval* lambda(lenv* e, lval* v) {
-  ASSERT_NUM_ARGS(v, 2, "lambda");
-  ASSERT_CHILD_TYPE(v, LVAL_QEXPR, 0, "lambda");
-  ASSERT_CHILD_TYPE(v, LVAL_QEXPR, 1, "lambda");
-
-  lval* arguments = pop_lval(v, 0);
-  lval* body = pop_lval(v, 0);
-
-  delete_lval(v);
-
-  return lval_lambda(arguments, body);
 }
 
 lval* head(lenv* e, lval* v) {

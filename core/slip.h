@@ -12,4 +12,5 @@ struct slip {
 };
 
 slip* initialize_slip(void);
+char* evaluate_string(mpc_parser_t* Parser, lenv* e, char* input);
 char* slip_stringify(lval* result);

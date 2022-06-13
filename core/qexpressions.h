@@ -9,4 +9,3 @@ lval* len(lenv* e, lval* v);
 
 lval* global_def(lenv* e, lval* v);
 lval* local_def(lenv* e, lval* v);
-lval* lambda(lenv* e, lval* v);

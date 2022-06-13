@@ -1,6 +1,6 @@
 #include "../core/mpc/mpc.h"
-#include "../core/lval.h"
-#include "../core/lenv.h"
+#include "../core/lval_definitions.h"
+#include "../core/environment.h"
 #include "../core/slip.h"
 #include <stdlib.h>
 
