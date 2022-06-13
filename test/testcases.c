@@ -8,6 +8,10 @@ testcases* get_testcases(void) {
     "+ 10 10",
   0);
 
+  add_testcase(tests, "Combining s-expressions", "54",
+    "- (+ 5 (* 6 9)) (/ 10 (+ 1 1))",
+  0);
+
   add_testcase(tests, "Q-expression manipulation: tail", "{2 3 4}",
     "tail {1 2 3 4}",
   0);
