@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 
 		char* message = slippy->evaluate_string(slippy->parser, slippy->environment, input);
 
-    printf(YELLOW "%s\n" RESET, message);
+    if (strlen(message) > 0) { printf(YELLOW "%s\n" RESET, message); }
 
 		free(input);
 	}

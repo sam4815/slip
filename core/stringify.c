@@ -30,6 +30,8 @@ char* stringify_lambda(lval* v) {
 }
 
 char* stringify_lval_expression(lval* v, char* open, char* close) {
+  if (v->count == 0) { return ""; }
+
   char* result = malloc(strlen(open) + 1);
   strcpy(result, open);
 
@@ -57,8 +59,17 @@ char* stringify_lval(lval* v) {
     return c;
   }
 
-  if (v->type == LVAL_ERR) { return v->err; }
-  if (v->type == LVAL_SYM) { return v->sym; }
+  if (v->type == LVAL_ERR) {
+    char* c = malloc(strlen(v->err) + 1);
+    sprintf(c, "%s", v->err);
+    return c;
+  }
+
+  if (v->type == LVAL_SYM) {
+    char* c = malloc(strlen(v->sym) + 1);
+    sprintf(c, "%s", v->sym);
+    return c;
+  }
 
   if (v->type == LVAL_FUNC && v->func != NULL) {
     char* c = malloc(20);
