@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=Roboto+Mono:wght@500&family=Source+Sans+Pro:wght@200&display=swap"
+      rel="stylesheet"
+    />
+    <meta charset="utf-8" />
+    <title>slip</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 18px;
+      }
+      #terminal {
+        color: #c0c5ce;
+        background-color: #2b303b;
+        min-height: calc(100vh - 20px);
+        width: calc(100vw - 20px);
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: end;
+        align-items: flex-start;
+        text-align: left;
+        overflow: auto;
+      }
+      #input {
+        border: none;
+        background: none;
+        color: #c0c5ce;
+        outline: none;
+        padding: 0px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 18px;
+      }
+      .slip-container {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .slip {
+        font-size: 22px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="terminal">
+      <div id="history"></div>
+      <div id="slip-container">
+        <span class="slip">🍂</span>
+        <input type="text" id="input" autocomplete="off" />
+      </div>
+    </div>
+
+    <script async type="text/javascript" src="slip.js"></script>
+    <script>
+      const terminalEl = document.getElementById("terminal");
+      const historyEl = document.getElementById("history");
+      const inputEl = document.getElementById("input");
+
+      const commandHistory = [];
+      let historyIndex = -1;
+
+      const goBackHistory = () => {
+        historyIndex = Math.min(historyIndex + 1, commandHistory.length - 1);
+        inputEl.value = commandHistory[historyIndex] || "";
+      };
+
+      const goForwardHistory = () => {
+        historyIndex = Math.max(historyIndex - 1, -1);
+        inputEl.value = commandHistory[historyIndex] || "";
+      };
+
+      const submitCommand = () => {
+        const command = inputEl.value;
+        const result = Module.ccall(
+          "evaluate", // name of C function
+          "string", // return type
+          ["string"], // argument types
+          [command] // arguments
+        );
+
+        if (command.trim() === "") {
+          inputEl.value = "";
+          return;
+        }
+
+        commandHistory.unshift(command);
+
+        if (command === "clear") {
+          historyEl.innerHTML = "";
+          inputEl.value = "";
+          return;
+        }
+
+        const commandHtml = document.createElement("div");
+        const resultHtml = document.createElement("div");
+        commandHtml.className = "slip-container";
+        resultHtml.style = "color: #ebcb8b";
+        commandHtml.innerHTML = `<span class="slip">🍂</span> ${command}`;
+        resultHtml.innerHTML = result;
+        historyEl.appendChild(commandHtml);
+        if (result.length > 0) historyEl.appendChild(resultHtml);
+
+        window.scrollTo(0, document.body.scrollHeight);
+        inputEl.value = "";
+        historyIndex = -1;
+      };
+
+      inputEl.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") submitCommand();
+
+        if (event.key === "ArrowUp" || event.key === "ArrowDown")
+          event.preventDefault();
+        if (event.key === "ArrowUp") goBackHistory();
+        if (event.key === "ArrowDown") goForwardHistory();
+      });
+
+      inputEl.focus();
+      terminalEl.addEventListener("click", () => inputEl.focus());
+    </script>
+  </body>
+</html>
