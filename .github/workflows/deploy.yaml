@@ -1,0 +1,38 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.1
+        with:
+          submodules: recursive
+
+      - name: Setup cache 📁
+        id: cache-system-libraries
+        uses: actions/cache@v2
+        with:
+          path: emsdk-cache
+          key: 1.39.18-${{ runner.os }}
+
+      - name: Install emsdk 📚
+        uses: mymindstorm/setup-emsdk@v11
+        with:
+          version: 1.39.18
+          actions-cache-folder: emsdk-cache
+
+      - name: Run tests 🧪
+        run: make test
+
+      - name: Build web target 🔧
+        run: make web
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        with:
+          branch: gh-pages
+          folder: build
