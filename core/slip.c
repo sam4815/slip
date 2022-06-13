@@ -157,12 +157,12 @@ slip* initialize_slip(void) {
 
 	mpca_lang(MPCA_LANG_DEFAULT,
 			"                                                                       \
-			symbol     : /[a-zA-Z0-9_+\\-*\\/\\\\=<>!&]+/ ;                         \
+			symbol     : /[a-zA-Z0-9_+\\^\\-*\\/\\\\=<>!&]+/ ;                      \
 			number     : /-?[0-9]+/ ;                                               \
 			sexpr      : '(' <expr>* ')' ;                                          \
 			qexpr      : '{' <expr>* '}' ;                                          \
 			expr       : <number> | <sexpr> | <qexpr> | <symbol> ;                  \
-			slip	   : /^/ <expr>* /$/ ;                                          \
+			slip	     : /^/ <expr>* /$/ ;                                          \
 			",
 			Parser, Sexpression, Qexpression, Expression, Symbol, Number);
 
