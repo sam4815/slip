@@ -9,6 +9,10 @@
       rel="stylesheet"
     />
     <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
     <title>slip</title>
     <style>
       html,
@@ -39,6 +43,7 @@
         padding: 0px;
         font-family: "IBM Plex Mono", monospace;
         font-size: 18px;
+        width: calc(100vw - 75px);
       }
       .slip-container {
         display: flex;
@@ -47,6 +52,15 @@
       }
       .slip {
         font-size: 22px;
+      }
+      @media (max-width: 640px) {
+        body,
+        #input {
+          font-size: 30px;
+        }
+        .slip {
+          font-size: 34px;
+        }
       }
     </style>
   </head>
