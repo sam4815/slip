@@ -116,17 +116,6 @@ lval* evaluate_lval(lenv* env, lval* val) {
 	return result;
 };
 
-void execute_code(mpc_parser_t* Slip, lenv* e, char* code) {
-  mpc_result_t result;
-	mpc_parse("input", code, Slip, &result);
-  evaluate_lval(e, parse_lval(result.output));
-}
-
-void build_library(mpc_parser_t* Slip, lenv* e) {
-  execute_code(Slip, e,
-    "def {fun} (\\ {args body} {def (head args) (\\ (tail args) body)})");
-}
-
 void destroy_slip(mpc_parser_t* Parser, lenv* e) {
   delete_env(e);
 	mpc_cleanup(1, Parser);
@@ -137,16 +126,21 @@ char* evaluate_string(mpc_parser_t* Parser, lenv* e, char* input) {
 	mpc_parse("input", input, Parser, &result);
 
   lval* evaluation = evaluate_lval(e, parse_lval(result.output));
-  char* evaluation_string = stringify_lval(evaluation);
+  char* evaluation_str = stringify_lval(evaluation);
 
   delete_lval(evaluation);
   mpc_ast_delete(result.output);
 
-  return evaluation_string;
+  return evaluation_str;
+}
+
+void build_library(mpc_parser_t* Parser, lenv* e) {
+  evaluate_string(Parser, e,
+    "def {fun} (\\ {args body} {def (head args) (\\ (tail args) body)})");
 }
 
 slip* initialize_slip(void) {
-  slip* slip_instance = malloc(sizeof(slip));
+  slip* slip_ptr = malloc(sizeof(slip));
 
 	mpc_parser_t* Parser = mpc_new("slip");
 	mpc_parser_t* Expression = mpc_new("expr");
@@ -170,10 +164,10 @@ slip* initialize_slip(void) {
 	set_built_in_functions(environment);
   build_library(Parser, environment);
 
-  slip_instance->parser = Parser;
-  slip_instance->environment = environment;
-  slip_instance->evaluate_string = evaluate_string;
-  slip_instance->destroy = destroy_slip;
+  slip_ptr->parser = Parser;
+  slip_ptr->environment = environment;
+  slip_ptr->evaluate_string = evaluate_string;
+  slip_ptr->destroy = destroy_slip;
 	
-	return slip_instance;
+	return slip_ptr;
 }
