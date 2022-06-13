@@ -12,7 +12,7 @@ $(TEST_TARGET): $(SRC) $(wildcard test/*.c)
 	$(CC) $(CFLAGS) $(LIBS) $(OBJS) -o $@ $^
 
 start: $(TERM_TARGET)
-	$(TERM_TARGET)
+	@$(TERM_TARGET)
 
 test: $(TEST_TARGET)
-	$(TEST_TARGET)
+	@$(TEST_TARGET)
