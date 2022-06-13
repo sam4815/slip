@@ -24,7 +24,7 @@ void add_history(char* unused) {}
 #include <editline/readline.h>
 #endif
 
-#define GREEN "\033[1;93m"
+#define YELLOW "\033[1;93m"
 #define RESET "\033[0m"
 
 int main(int argc, char** argv) {
@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 
 		char* message = slippy->evaluate_string(slippy->parser, slippy->environment, input);
 
-    printf(GREEN "%s\n" RESET, message);
+    printf(YELLOW "%s\n" RESET, message);
 
 		free(input);
 	}
