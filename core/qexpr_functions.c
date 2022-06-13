@@ -22,7 +22,7 @@ lval* local_def(lenv* e, lval* v) {
   lval* syms = v->cell[0];
   for (int i = 0; i < syms->count; i++) {
     ASSERT_CHILD_TYPE(syms, LVAL_SYM, i, "=");
-    set_lval(e, syms->cell[i], v->cell[i + 1]);
+    set_lval_on_env(e, syms->cell[i], v->cell[i + 1]);
   }
 
   delete_lval(v);

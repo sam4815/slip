@@ -52,14 +52,14 @@ lval* call_lval(lenv* env, lval* func, lval* arguments) {
       }
 
       lval* remaining_args_sym = pop_lval(func->arguments, 0);
-      set_lval(func->env, remaining_args_sym, list(env, arguments));
+      set_lval_on_env(func->env, remaining_args_sym, list(env, arguments));
       delete_lvals(2, sym, remaining_args_sym);
       break;
     }
 
     lval* val = pop_lval(arguments, 0);
 
-    set_lval(func->env, sym, val);
+    set_lval_on_env(func->env, sym, val);
     delete_lvals(2, sym, val);
   }
 
@@ -76,7 +76,7 @@ lval* call_lval(lenv* env, lval* func, lval* arguments) {
     lval* sym = pop_lval(func->arguments, 0);
     lval* val = lval_sexpr();
 
-    set_lval(func->env, sym, val);
+    set_lval_on_env(func->env, sym, val);
     delete_lvals(2, sym, val);
   }
 
@@ -92,7 +92,7 @@ lval* call_lval(lenv* env, lval* func, lval* arguments) {
 lval* evaluate_lval(lenv* env, lval* val) {
 	// Return corresponding variable
 	if (val->type == LVAL_SYM) {
-		lval* env_val = get_lval(env, val);
+		lval* env_val = get_lval_from_env(env, val);
 		delete_lval(val);
 		return env_val;
 	}

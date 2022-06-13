@@ -7,11 +7,11 @@ struct lenv {
 };
 
 lenv* initialize_env(void);
-void delete_env(lenv*);
-lenv* copy_env(lenv*);
+void delete_env(lenv* env);
+lenv* copy_env(lenv* env);
 
-lval* get_lval(lenv* e, lval* sym);
-void set_lval(lenv* e, lval* sym, lval* val);
-void set_global_lval(lenv* e, lval* sym, lval* val);
+lval* get_lval_from_env(lenv* env, lval* sym);
+void set_lval_on_env(lenv* env, lval* sym, lval* val);
+void set_global_lval(lenv* env, lval* sym, lval* val);
 
-void set_func(lenv* e, char* name, lfunc func);
+void set_func(lenv* env, char* name, lfunc func);
