@@ -17,7 +17,6 @@ void set_built_in_functions(lenv* e) {
 	set_func_on_env(e, "eval", eval);
 	set_func_on_env(e, "cons", cons);
 	set_func_on_env(e, "init", init);
-	set_func_on_env(e, "len", len);
   set_func_on_env(e, "def", global_def);
   set_func_on_env(e, "=", local_def);
   set_func_on_env(e, "\\", lambda);
@@ -55,6 +54,9 @@ void set_built_in_functions(lenv* e) {
 
 void build_library(mpc_parser_t* Parser, lenv* e) {
   set_built_in_functions(e);
+
   evaluate_string(Parser, e,
     "def {fun} (\\ {args body} {def (head args) (\\ (tail args) body)})");
+  evaluate_string(Parser, e,
+    "fun {len l} {if (== l {}) {0} {+ 1 (len (tail l))}}");
 }

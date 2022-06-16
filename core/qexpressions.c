@@ -91,16 +91,6 @@ lval* cons(lenv* e, lval* v) {
 	return qexpr;
 }
 
-lval* len(lenv* e, lval* v) {
-  ASSERT_NUM_ARGS(v, 1, "len");
-  ASSERT_CHILD_TYPE(v, LVAL_QEXPR, 0, "len");
-
-	lval* length = lval_num(v->cell[0]->count);
-	delete_lval(v);
-
-	return length;
-}
-
 lval* init(lenv* e, lval* v) {
   ASSERT_NUM_ARGS(v, 1, "init");
   ASSERT_CHILD_TYPE(v, LVAL_QEXPR, 0, "init");

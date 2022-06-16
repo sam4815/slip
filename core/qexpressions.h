@@ -7,7 +7,6 @@ lval* eval(lenv* e, lval* v);
 lval* join(lenv* e, lval* v);
 lval* cons(lenv* e, lval* v);
 lval* init(lenv* e, lval* v);
-lval* len(lenv* e, lval* v);
 
 lval* global_def(lenv* e, lval* v);
 lval* local_def(lenv* e, lval* v);
