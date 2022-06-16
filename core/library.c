@@ -59,4 +59,13 @@ void build_library(mpc_parser_t* Parser, lenv* e) {
     "def {fun} (\\ {args body} {def (head args) (\\ (tail args) body)})");
   evaluate_string(Parser, e,
     "fun {len l} {if (== l {}) {0} {+ 1 (len (tail l))}}");
+  evaluate_string(Parser, e,
+    "fun {includes l a} { \
+      if (== (head l) a) \
+        {true} \
+        {if (== (len l) 1) \
+          {false} \
+          {includes (tail l) a} \
+        } \
+    }");
 }
