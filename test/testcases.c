@@ -94,12 +94,32 @@ testcases* get_testcases(void) {
     "== head head",
   0);
 
-  add_testcase(tests, "Condition statements", "3",
+  add_testcase(tests, "Conditional statements", "3",
     "if (== 1 1) {+ 1 2} {+ 1 3}",
   0);
 
-  add_testcase(tests, "Condition statements", "4",
+  add_testcase(tests, "Conditional statements", "4",
     "if (== 1 2) {+ 1 2} {+ 1 3}",
+  0);
+
+  add_testcase(tests, "Logical operators: and", "true",
+    "and (== 10 10) (== 10 10)",
+  0);
+
+  add_testcase(tests, "Logical operators: and", "false",
+    "and (== 10 10) (== 10 12)",
+  0);
+
+  add_testcase(tests, "Logical operators: or", "true",
+    "or (== 10 10) (== 10 12)",
+  0);
+
+  add_testcase(tests, "Logical operators: or", "false",
+    "or (== 10 11) (== 10 12)",
+  0);
+
+  add_testcase(tests, "Logical operators: not", "false",
+    "not (== 10 10)",
   0);
 
   return tests;

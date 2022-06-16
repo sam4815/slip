@@ -6,6 +6,7 @@
 #include "numbers.h"
 #include "qexpressions.h"
 #include "lambdas.h"
+#include "logical_operators.h"
 #include "library.h"
 #include "slip.h"
 
@@ -40,6 +41,11 @@ void set_built_in_functions(lenv* e) {
 	set_func_on_env(e, ">=", greater_than_or_equal);
 	set_func_on_env(e, "<", less_than);
 	set_func_on_env(e, "<=", less_than_or_equal);
+
+  // Logical operators
+  set_func_on_env(e, "and", and);
+  set_func_on_env(e, "or", or);
+  set_func_on_env(e, "not", not);
 
   // Conditionals
   set_func_on_env(e, "if", if_condition);
