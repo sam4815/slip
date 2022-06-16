@@ -1,8 +1,5 @@
 #include <stdio.h>
-#include "mpc/mpc.h"
-#include "lval_definitions.h"
 #include "lval_operations.h"
-#include "stringify.h"
 #include "assert.h"
 #include "environment.h"
 

@@ -1,3 +1,5 @@
+#include "lval_definitions.h"
+
 lval* append_lval(lval* parent, lval* child);
 lval* pop_lval(lval* v, int i);
 lval* extract_lval(lval* v, int i);

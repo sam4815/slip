@@ -1,5 +1,4 @@
 #include <string.h>
-#include "lval_definitions.h"
 #include "lval_operations.h"
 #include "assert.h"
 #include "stringify.h"

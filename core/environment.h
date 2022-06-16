@@ -1,3 +1,5 @@
+#include "lval_definitions.h"
+
 struct lenv {
 	int count;
 	lval** vals;

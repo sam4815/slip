@@ -1,8 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../core/mpc/mpc.h"
-#include "../core/lval_definitions.h"
-#include "../core/environment.h"
 #include "../core/slip.h"
 #include "testcases.h"
 

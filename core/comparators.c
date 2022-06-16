@@ -1,11 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-#include "lval_definitions.h"
 #include "lval_operations.h"
 #include "assert.h"
-#include "stringify.h"
-#include "environment.h"
 #include "comparators.h"
 
 bool are_lvals_equal(lval* a, lval* b) {

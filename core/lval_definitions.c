@@ -1,8 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
-#include "mpc/mpc.h"
+#include <string.h>
 #include "lval_definitions.h"
-#include "lval_operations.h"
 #include "environment.h"
 
 lval* lval_num(long num) {

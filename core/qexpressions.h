@@ -1,3 +1,5 @@
+#include "lval_definitions.h"
+
 lval* head(lenv* e, lval* v);
 lval* tail(lenv* e, lval* v);
 lval* list(lenv* e, lval* v);

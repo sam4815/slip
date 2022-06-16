@@ -1,3 +1,4 @@
+#include "lval_definitions.h"
 #include "stringify.h"
 
 #define ASSERT(val, cond, fmt, ...) \

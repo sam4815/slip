@@ -1,3 +1,5 @@
+#include "lval_definitions.h"
+
 lval* equal(lenv* e, lval* v);
 lval* not_equal(lenv* e, lval* v);
 lval* greater_than(lenv* e, lval* v);

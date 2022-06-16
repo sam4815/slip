@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include "lval_definitions.h"
 #include "lval_operations.h"
 #include "environment.h"
 

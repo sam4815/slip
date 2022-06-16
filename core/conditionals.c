@@ -1,9 +1,7 @@
 #include <stdio.h>
-#include "lval_definitions.h"
 #include "lval_operations.h"
 #include "qexpressions.h"
 #include "assert.h"
-#include "environment.h"
 #include "conditionals.h"
 
 lval* if_condition(lenv* e, lval* v) {

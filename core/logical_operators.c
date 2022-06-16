@@ -1,7 +1,5 @@
-#include "lval_definitions.h"
 #include "lval_operations.h"
 #include "assert.h"
-#include "environment.h"
 #include "logical_operators.h"
 
 lval* and(lenv* e, lval* v) {

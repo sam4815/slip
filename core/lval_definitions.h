@@ -1,3 +1,6 @@
+#ifndef lval_definitions
+#define lval_definitions
+
 struct lval;
 struct lenv;
 typedef struct lenv lenv;
@@ -37,3 +40,5 @@ lval* lval_sexpr(void);
 lval* lval_qexpr(void);
 lval* lval_func(lfunc func);
 lval* lval_lambda(lval* arguments, lval* body);
+
+#endif

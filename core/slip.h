@@ -1,3 +1,6 @@
+#include "mpc/mpc.h"
+#include "lval_definitions.h"
+
 typedef char*(*pfunc)(mpc_parser_t*, lenv*, char*);
 typedef void(*dfunc)(mpc_parser_t*, lenv*);
 

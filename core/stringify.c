@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "lval_definitions.h"
 #include "stringify.h"
 
 char* stringify_type(int t) {

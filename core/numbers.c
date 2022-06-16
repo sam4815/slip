@@ -1,11 +1,8 @@
 #include <stdio.h>
 #include <math.h>
-#include "mpc/mpc.h"
-#include "lval_definitions.h"
+#include <string.h>
 #include "lval_operations.h"
 #include "assert.h"
-#include "stringify.h"
-#include "environment.h"
 #include "numbers.h"
 
 lval* operate(lenv* e, lval* v, char* operation) {

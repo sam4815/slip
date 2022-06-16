@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "mpc/mpc.h"
-#include "lval_definitions.h"
 #include "lval_operations.h"
 #include "lval_parser.h"
 #include "environment.h"

@@ -1,8 +1,5 @@
-#include "../core/mpc/mpc.h"
-#include "../core/lval_definitions.h"
-#include "../core/environment.h"
-#include "../core/slip.h"
 #include <stdlib.h>
+#include "../core/slip.h"
 
 #ifdef _WIN32
 #include <string.h>

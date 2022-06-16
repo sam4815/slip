@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "mpc/mpc.h"
-#include "lval_definitions.h"
+#include <string.h>
 #include "lval_operations.h"
 #include "environment.h"
 
