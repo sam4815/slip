@@ -26,8 +26,9 @@ bool are_lvals_equal(lval* a, lval* b) {
     return true;
   }
 
-  if (a->type == LVAL_FUNC) {
-    if (a->func == b->func) { return true; }
+  if (a->type == LVAL_FUNC && a->func != NULL) { return a->func == b->func; }
+
+  if (a->type == LVAL_FUNC && a->func == NULL) {
     if (!are_lvals_equal(a->arguments, b->arguments)) return false;
     if (!are_lvals_equal(a->body, b->body)) return false;
     return true;

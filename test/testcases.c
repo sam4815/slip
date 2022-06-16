@@ -54,5 +54,41 @@ testcases* get_testcases(void) {
     "uncurry head 5 6 7",
   0);
 
+  add_testcase(tests, "Comparing numbers", "true",
+    "== 516 516",
+  0);
+
+  add_testcase(tests, "Comparing numbers", "true",
+    "> 516 216",
+  0);
+
+  add_testcase(tests, "Comparing numbers", "false",
+    "< 516 216",
+  0);
+
+  add_testcase(tests, "Comparing q-expressions", "true",
+    "== {1 2 5} {1 2 5}",
+  0);
+
+  add_testcase(tests, "Comparing s-expressions", "true",
+    "== (+ 2 6) (+ 4 4)",
+  0);
+
+  add_testcase(tests, "Comparing functions", "true",
+    "fun {add_1 a b} {+ a b}",
+    "fun {add_2 a b} {+ a b}",
+    "== add_1 add_2",
+  0);
+
+  add_testcase(tests, "Comparing functions", "false",
+    "fun {add a b} {+ a b}",
+    "fun {subtract a b} {- a b}",
+    "== add subtract",
+  0);
+
+  add_testcase(tests, "Comparing functions", "true",
+    "== head head",
+  0);
+
   return tests;
 }
