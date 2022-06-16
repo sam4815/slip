@@ -94,5 +94,13 @@ testcases* get_testcases(void) {
     "== head head",
   0);
 
+  add_testcase(tests, "Condition statements", "3",
+    "if (== 1 1) {+ 1 2} {+ 1 3}",
+  0);
+
+  add_testcase(tests, "Condition statements", "4",
+    "if (== 1 2) {+ 1 2} {+ 1 3}",
+  0);
+
   return tests;
 }

@@ -1,3 +1,5 @@
+#include "stringify.h"
+
 #define ASSERT(val, cond, fmt, ...) \
 	if (!(cond)) { lval* err = lval_err(fmt, ##__VA_ARGS__); delete_lval(val); return err; }
 
@@ -8,6 +10,10 @@
 #define ASSERT_MIN_NUM_ARGS(val, num, name) \
   ASSERT(val, val->count >= num, \
     "Function '%s' passed incorrect number of arguments. Got %i, expected at least %i.", name, val->count, num);
+
+#define ASSERT_MAX_NUM_ARGS(val, num, name) \
+  ASSERT(val, val->count <= num, \
+    "Function '%s' passed incorrect number of arguments. Got %i, expected at most %i.", name, val->count, num);
 
 #define ASSERT_TYPE(val, target, name) \
   ASSERT(val, val->type == target, \

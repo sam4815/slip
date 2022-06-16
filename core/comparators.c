@@ -5,7 +5,6 @@
 #include "lval_operations.h"
 #include "assert.h"
 #include "stringify.h"
-#include "assert.h"
 #include "environment.h"
 #include "comparators.h"
 
@@ -42,7 +41,7 @@ lval* equal(lenv* e, lval* v) {
 
   bool is_equal = false;
 
-lval* first_child = pop_lval(v, 0);
+  lval* first_child = pop_lval(v, 0);
 
   while (v->count != 0) {
     lval* next_child = pop_lval(v, 0);

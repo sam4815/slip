@@ -2,6 +2,7 @@
 #include "lval_definitions.h"
 #include "environment.h"
 #include "comparators.h"
+#include "conditionals.h"
 #include "numbers.h"
 #include "qexpressions.h"
 #include "lambdas.h"
@@ -39,6 +40,9 @@ void set_built_in_functions(lenv* e) {
 	set_func_on_env(e, ">=", greater_than_or_equal);
 	set_func_on_env(e, "<", less_than);
 	set_func_on_env(e, "<=", less_than_or_equal);
+
+  // Conditionals
+  set_func_on_env(e, "if", if_condition);
 }
 
 void build_library(mpc_parser_t* Parser, lenv* e) {
