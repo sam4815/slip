@@ -34,6 +34,7 @@ void set_built_in_functions(lenv* e) {
 
   // Comparators
   set_func_on_env(e, "==", equal);
+  set_func_on_env(e, "!=", not_equal);
 	set_func_on_env(e, ">", greater_than);
 	set_func_on_env(e, ">=", greater_than_or_equal);
 	set_func_on_env(e, "<", less_than);

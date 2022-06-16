@@ -59,6 +59,10 @@ testcases* get_testcases(void) {
   0);
 
   add_testcase(tests, "Comparing numbers", "true",
+    "!= 515 516",
+  0);
+
+  add_testcase(tests, "Comparing numbers", "true",
     "> 516 216",
   0);
 

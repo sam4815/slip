@@ -42,14 +42,23 @@ lval* equal(lenv* e, lval* v) {
 
   bool is_equal = false;
 
-  lval* first_child = pop_lval(v, 0);
+lval* first_child = pop_lval(v, 0);
 
   while (v->count != 0) {
     lval* next_child = pop_lval(v, 0);
     is_equal = are_lvals_equal(first_child, next_child);
+    delete_lval(next_child);
   }
 
+  delete_lvals(2, first_child, v);
+
   return is_equal ? lval_bool(1) : lval_bool(0);
+}
+
+lval* not_equal(lenv* e, lval* v) {
+  lval* result = equal(e, v);
+  result->boole = !result->boole;
+  return result;
 }
 
 lval* compare_numbers(lenv* e, lval* v, char* operation) {
@@ -69,7 +78,11 @@ lval* compare_numbers(lenv* e, lval* v, char* operation) {
     if (strcmp(operation, "<") == 0) { accumulator = x < y; }
     if (strcmp(operation, ">=") == 0) { accumulator = x >= y; }
     if (strcmp(operation, "<=") == 0) { accumulator = x <= y; }
+
+    delete_lval(next_child);
   }
+
+  delete_lvals(2, first_child, v);
 
   return accumulator ? lval_bool(1) : lval_bool(0);
 }
