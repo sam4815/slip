@@ -72,7 +72,6 @@ slip* initialize_slip(void) {
 
 	mpca_lang(MPCA_LANG_DEFAULT,
 			"                                                                       \
-			boolean    : /true/ | /false/ ;                                             \
 			symbol     : /[a-zA-Z0-9_+\\^\\-*\\/\\\\=<>!&]+/ ;                      \
 			number     : /-?[0-9]+/ ;                                               \
 			sexpr      : '(' <expr>* ')' ;                                          \

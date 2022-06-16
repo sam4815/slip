@@ -106,6 +106,10 @@ testcases* get_testcases(void) {
     "and (== 10 10) (== 10 10)",
   0);
 
+  add_testcase(tests, "Logical operators: and", "true",
+    "and (true) (true)",
+  0);
+
   add_testcase(tests, "Logical operators: and", "false",
     "and (== 10 10) (== 10 12)",
   0);
@@ -116,6 +120,10 @@ testcases* get_testcases(void) {
 
   add_testcase(tests, "Logical operators: or", "false",
     "or (== 10 11) (== 10 12)",
+  0);
+
+  add_testcase(tests, "Logical operators: or", "false",
+    "or (false) (false)",
   0);
 
   add_testcase(tests, "Logical operators: not", "false",

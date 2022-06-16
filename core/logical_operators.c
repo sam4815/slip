@@ -2,6 +2,14 @@
 #include "assert.h"
 #include "logical_operators.h"
 
+lval* true_lval(lenv* e, lval* v) {
+  return lval_bool(1);
+}
+
+lval* false_lval(lenv* e, lval* v) {
+  return lval_bool(0);
+}
+
 lval* and(lenv* e, lval* v) {
   ASSERT_MIN_NUM_ARGS(v, 2, "and");
 

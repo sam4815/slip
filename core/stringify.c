@@ -11,6 +11,7 @@ char* stringify_type(int t) {
     case LVAL_QEXPR: return "q-expression";
     case LVAL_SYM: return "symbol";
     case LVAL_FUNC: return "function";
+    case LVAL_BOOL: return "boolean";
     default: return "unknown type";
   }
 }
