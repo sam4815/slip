@@ -5,6 +5,10 @@
   ASSERT(val, val->count == num, \
     "Function '%s' passed incorrect number of arguments. Got %i, expected %i.", name, val->count, num);
 
+#define ASSERT_MIN_NUM_ARGS(val, num, name) \
+  ASSERT(val, val->count >= num, \
+    "Function '%s' passed incorrect number of arguments. Got %i, expected at least %i.", name, val->count, num);
+
 #define ASSERT_TYPE(val, target, name) \
   ASSERT(val, val->type == target, \
     "Function '%s' passed incorrect type. Got %s, expected %s.", name, stringify_type(val->type), stringify_type(target));

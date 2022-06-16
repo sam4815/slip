@@ -1,6 +1,7 @@
 #include "mpc/mpc.h"
 #include "lval_definitions.h"
 #include "environment.h"
+#include "comparators.h"
 #include "numbers.h"
 #include "qexpressions.h"
 #include "lambdas.h"
@@ -8,6 +9,7 @@
 #include "slip.h"
 
 void set_built_in_functions(lenv* e) {
+  // Q-expression operations
 	set_func_on_env(e, "list", list);
 	set_func_on_env(e, "join", join);
 	set_func_on_env(e, "head", head);
@@ -20,6 +22,7 @@ void set_built_in_functions(lenv* e) {
   set_func_on_env(e, "=", local_def);
   set_func_on_env(e, "\\", lambda);
 
+  // Number operations
 	set_func_on_env(e, "+", add);
 	set_func_on_env(e, "-", subtract);
 	set_func_on_env(e, "*", multiply);
@@ -28,6 +31,13 @@ void set_built_in_functions(lenv* e) {
 	set_func_on_env(e, "^", power);
 	set_func_on_env(e, "min", minimum);
 	set_func_on_env(e, "max", maximum);
+
+  // Comparators
+  set_func_on_env(e, "==", equal);
+	set_func_on_env(e, ">", greater_than);
+	set_func_on_env(e, ">=", greater_than_or_equal);
+	set_func_on_env(e, "<", less_than);
+	set_func_on_env(e, "<=", less_than_or_equal);
 }
 
 void build_library(mpc_parser_t* Parser, lenv* e) {

@@ -5,13 +5,14 @@ typedef struct lval lval;
 
 typedef lval*(*lfunc)(lenv*, lval*);
 
-enum { LVAL_NUM, LVAL_ERR, LVAL_SEXPR, LVAL_QEXPR, LVAL_SYM, LVAL_FUNC };
+enum { LVAL_NUM, LVAL_ERR, LVAL_SEXPR, LVAL_QEXPR, LVAL_SYM, LVAL_FUNC, LVAL_BOOL };
 
 struct lval {
 	int type;
 
   // Primitives
 	long num;
+  int boole;
 	char* err;
 	char* sym;
 
@@ -29,6 +30,7 @@ struct lval {
 };
 
 lval* lval_num(long num);
+lval* lval_bool(int boole);
 lval* lval_err(char* fmt, ...);
 lval* lval_sym(char* sym);
 lval* lval_sexpr(void);

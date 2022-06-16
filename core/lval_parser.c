@@ -9,10 +9,15 @@ lval* parse_lval_number(mpc_ast_t* tree) {
 	return errno == ERANGE ? lval_err("Invalid number") : lval_num(number);
 }
 
+lval* parse_lval_boolean(mpc_ast_t* tree) {
+	return strstr(tree->contents, "true") ? lval_bool(1) : lval_bool(0);
+}
+
 lval* parse_lval(mpc_ast_t* tree) {
 	lval* parsed_lval = lval_sexpr();
 
 	if (strstr(tree->tag, "number")) { parsed_lval = parse_lval_number(tree); }
+	if (strstr(tree->tag, "boolean")) { parsed_lval = parse_lval_boolean(tree); }
 	if (strstr(tree->tag, "symbol")) { parsed_lval = lval_sym(tree->contents); }
 	if (strstr(tree->tag, "qexpr")) { parsed_lval = lval_qexpr(); }
 	if (strstr(tree->tag, "sexpr") || strcmp(tree->tag, ">") == 0) {

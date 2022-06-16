@@ -59,6 +59,12 @@ char* stringify_lval(lval* v) {
     return c;
   }
 
+  if (v->type == LVAL_BOOL) {
+    char* c = malloc(6);
+    sprintf(c, v->boole ? "true" : "false");
+    return c;
+  }
+
   if (v->type == LVAL_ERR) {
     char* c = malloc(strlen(v->err) + 1);
     sprintf(c, "%s", v->err);

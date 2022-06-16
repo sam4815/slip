@@ -12,6 +12,13 @@ lval* lval_num(long num) {
 	return v;
 }
 
+lval* lval_bool(int boole) {
+	lval* v = malloc(sizeof(lval));
+	v->type = LVAL_BOOL;
+	v->boole = boole;
+	return v;
+}
+
 lval* lval_err(char* fmt, ...) {
   lval* v = malloc(sizeof(lval));
 	v->type = LVAL_ERR;

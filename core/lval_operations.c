@@ -70,6 +70,7 @@ lval* copy_lval(lval* v) {
 	x->type = v->type;
 
 	if (v->type == LVAL_NUM) { x->num = v->num; }
+	if (v->type == LVAL_BOOL) { x->boole = v->boole; }
 
 	if (v->type == LVAL_SYM) {
 		x->sym = malloc(strlen(v->sym) + 1);
