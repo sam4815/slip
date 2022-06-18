@@ -71,6 +71,7 @@ slip* initialize_slip(void) {
 	mpc_parser_t* Qexpression = mpc_new("qexpr");
 	mpc_parser_t* Symbol = mpc_new("symbol");
 	mpc_parser_t* String = mpc_new("string");
+	mpc_parser_t* Comment = mpc_new("comment");
 	mpc_parser_t* Number = mpc_new("number");
 
 	mpca_lang(MPCA_LANG_DEFAULT,
@@ -78,12 +79,14 @@ slip* initialize_slip(void) {
 			symbol     : /[a-zA-Z0-9_+\\^\\-*\\/\\\\=<>!&]+/ ;                      \
 			number     : /-?[0-9]+/ ;                                               \
       string     : /\"(\\\\.|[^\"])*\"/ ;                                     \
+      comment    : /;[^\\r\\n]*/ ;                                            \
 			sexpr      : '(' <expr>* ')' ;                                          \
 			qexpr      : '{' <expr>* '}' ;                                          \
-			expr       : <number> | <string> | <sexpr> | <qexpr> | <symbol> ;       \
+			expr       : <number> | <string> | <comment>                            \
+                 | <sexpr> | <qexpr> | <symbol> ;                             \
 			slip	     : /^/ <expr>* /$/ ;                                          \
 			",
-			Parser, Sexpression, Qexpression, Expression, Symbol, String, Number);
+			Parser, Sexpression, Qexpression, Expression, Symbol, String, Comment, Number);
 
 	lenv* environment = initialize_env();
   build_library(Parser, environment);
