@@ -130,5 +130,9 @@ testcases* get_testcases(void) {
     "not (== 10 10)",
   0);
 
+  add_testcase(tests, "Strings", "\"hello\"",
+    "eval (head {\"hello\" \"world\"})",
+  0);
+
   return tests;
 }
