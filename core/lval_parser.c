@@ -7,6 +7,12 @@ lval* parse_lval_number(mpc_ast_t* tree) {
 	return errno == ERANGE ? lval_err("Invalid number") : lval_num(number);
 }
 
+lval* parse_lval_bool(mpc_ast_t* tree) {
+  if (strstr(tree->contents, "true")) return lval_bool(1);
+  if (strstr(tree->contents, "false")) return lval_bool(0);
+  return lval_err("Invalid boolean");
+}
+
 lval* parse_lval_string(mpc_ast_t* tree) {
   // Ignore first and last characters, which are quotation marks
   tree->contents[strlen(tree->contents) - 1] = '\0';
@@ -25,8 +31,9 @@ lval* parse_lval(mpc_ast_t* tree) {
 	lval* parsed_lval = lval_sexpr();
 
 	if (strstr(tree->tag, "number")) { parsed_lval = parse_lval_number(tree); }
-	if (strstr(tree->tag, "symbol")) { parsed_lval = lval_sym(tree->contents); }
+	if (strstr(tree->tag, "boolean")) { parsed_lval = parse_lval_bool(tree); }
 	if (strstr(tree->tag, "string")) { parsed_lval = parse_lval_string(tree); }
+	if (strstr(tree->tag, "symbol")) { parsed_lval = lval_sym(tree->contents); }
 	if (strstr(tree->tag, "qexpr")) { parsed_lval = lval_qexpr(); }
 	if (strstr(tree->tag, "sexpr") || strcmp(tree->tag, ">") == 0) {
 		parsed_lval = lval_sexpr();

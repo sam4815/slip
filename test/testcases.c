@@ -107,7 +107,7 @@ testcases* get_testcases(void) {
   0);
 
   add_testcase(tests, "Logical operators: and", "true",
-    "and (true) (true)",
+    "and true true",
   0);
 
   add_testcase(tests, "Logical operators: and", "false",
@@ -123,11 +123,15 @@ testcases* get_testcases(void) {
   0);
 
   add_testcase(tests, "Logical operators: or", "false",
-    "or (false) (false)",
+    "or false false",
   0);
 
   add_testcase(tests, "Logical operators: not", "false",
     "not (== 10 10)",
+  0);
+
+  add_testcase(tests, "Logical operators: not", "false",
+    "not true",
   0);
 
   add_testcase(tests, "Strings", "\"hello\"",

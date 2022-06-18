@@ -46,10 +46,6 @@ void set_built_in_functions(lenv* e) {
 
   // Conditionals
   set_func_on_env(e, "if", if_condition);
-
-  // Booleans
-  set_func_on_env(e, "true", true_lval);
-  set_func_on_env(e, "false", false_lval);
 }
 
 void build_library(mpc_parser_t* Parser, lenv* e) {

@@ -72,6 +72,7 @@ slip* initialize_slip(void) {
 	mpc_parser_t* Symbol = mpc_new("symbol");
 	mpc_parser_t* String = mpc_new("string");
 	mpc_parser_t* Comment = mpc_new("comment");
+	mpc_parser_t* Boolean = mpc_new("boolean");
 	mpc_parser_t* Number = mpc_new("number");
 
 	mpca_lang(MPCA_LANG_DEFAULT,
@@ -79,14 +80,16 @@ slip* initialize_slip(void) {
 			symbol     : /[a-zA-Z0-9_+\\^\\-*\\/\\\\=<>!&]+/ ;                      \
 			number     : /-?[0-9]+/ ;                                               \
       string     : /\"(\\\\.|[^\"])*\"/ ;                                     \
+      boolean    : /true|false/ ;                                             \
       comment    : /;[^\\r\\n]*/ ;                                            \
 			sexpr      : '(' <expr>* ')' ;                                          \
 			qexpr      : '{' <expr>* '}' ;                                          \
-			expr       : <number> | <string> | <comment>                            \
+			expr       : <number> | <string> | <boolean> | <comment>                \
                  | <sexpr> | <qexpr> | <symbol> ;                             \
 			slip	     : /^/ <expr>* /$/ ;                                          \
 			",
-			Parser, Sexpression, Qexpression, Expression, Symbol, String, Comment, Number);
+			Parser, Sexpression, Qexpression, Expression,
+      Symbol, String, Comment, Boolean, Number);
 
 	lenv* environment = initialize_env();
   build_library(Parser, environment);
