@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "stringify.h"
+#include "mpc/mpc.h"
+#include "lval_stringify.h"
 
 char* stringify_type(int t) {
   switch(t) {
     case LVAL_NUM: return "number";
     case LVAL_ERR: return "error";
+    case LVAL_STR: return "string";
     case LVAL_SEXPR: return "s-expression";
     case LVAL_QEXPR: return "q-expression";
     case LVAL_SYM: return "symbol";
@@ -74,6 +76,15 @@ char* stringify_lval(lval* v) {
   if (v->type == LVAL_SYM) {
     char* c = malloc(strlen(v->sym) + 1);
     sprintf(c, "%s", v->sym);
+    return c;
+  }
+
+  if (v->type == LVAL_STR) {
+    char* c = malloc(strlen(v->str) + 1);
+    char* escaped = malloc(strlen(v->str) + 1);
+    strcpy(escaped, v->str);
+    escaped = mpcf_escape(escaped);
+    sprintf(c, "\"%s\"", escaped);
     return c;
   }
 

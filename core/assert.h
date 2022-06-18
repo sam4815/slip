@@ -1,5 +1,5 @@
 #include "lval_definitions.h"
-#include "stringify.h"
+#include "lval_stringify.h"
 
 #define ASSERT(val, cond, fmt, ...) \
 	if (!(cond)) { lval* err = lval_err(fmt, ##__VA_ARGS__); delete_lval(val); return err; }

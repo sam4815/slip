@@ -3,10 +3,10 @@
 #include <stdbool.h>
 #include "lval_operations.h"
 #include "lval_parser.h"
+#include "lval_stringify.h"
 #include "environment.h"
 #include "lambdas.h"
 #include "library.h"
-#include "stringify.h"
 #include "slip.h"
 
 lval* call_lval(lenv* env, lval* func, lval* arguments) {
@@ -49,8 +49,10 @@ void destroy_slip(mpc_parser_t* Parser, lenv* e) {
 
 char* evaluate_string(mpc_parser_t* Parser, lenv* e, char* input) {
   mpc_result_t result;
-	mpc_parse("input", input, Parser, &result);
+  int parse_success = mpc_parse("input", input, Parser, &result);
 
+	if (!parse_success) { return "Error parsing input"; }
+  
   lval* evaluation = evaluate_lval(e, parse_lval(result.output));
   char* evaluation_str = stringify_lval(evaluation);
 
@@ -68,18 +70,20 @@ slip* initialize_slip(void) {
 	mpc_parser_t* Sexpression = mpc_new("sexpr");
 	mpc_parser_t* Qexpression = mpc_new("qexpr");
 	mpc_parser_t* Symbol = mpc_new("symbol");
+	mpc_parser_t* String = mpc_new("string");
 	mpc_parser_t* Number = mpc_new("number");
 
 	mpca_lang(MPCA_LANG_DEFAULT,
 			"                                                                       \
 			symbol     : /[a-zA-Z0-9_+\\^\\-*\\/\\\\=<>!&]+/ ;                      \
 			number     : /-?[0-9]+/ ;                                               \
+      string     : /\"(\\\\.|[^\"])*\"/ ;                                     \
 			sexpr      : '(' <expr>* ')' ;                                          \
 			qexpr      : '{' <expr>* '}' ;                                          \
-			expr       : <number> | <sexpr> | <qexpr> | <symbol> ;                  \
+			expr       : <number> | <string> | <sexpr> | <qexpr> | <symbol> ;       \
 			slip	     : /^/ <expr>* /$/ ;                                          \
 			",
-			Parser, Sexpression, Qexpression, Expression, Symbol, Number);
+			Parser, Sexpression, Qexpression, Expression, Symbol, String, Number);
 
 	lenv* environment = initialize_env();
   build_library(Parser, environment);

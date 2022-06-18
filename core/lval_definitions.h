@@ -8,7 +8,16 @@ typedef struct lval lval;
 
 typedef lval*(*lfunc)(lenv*, lval*);
 
-enum { LVAL_NUM, LVAL_ERR, LVAL_SEXPR, LVAL_QEXPR, LVAL_SYM, LVAL_FUNC, LVAL_BOOL };
+enum {
+  LVAL_NUM,
+  LVAL_STR,
+  LVAL_SYM,
+  LVAL_ERR,
+  LVAL_BOOL,
+  LVAL_SEXPR,
+  LVAL_QEXPR,
+  LVAL_FUNC,
+};
 
 struct lval {
 	int type;
@@ -18,6 +27,7 @@ struct lval {
   int boole;
 	char* err;
 	char* sym;
+	char* str;
 
   // Built-in functions
 	lfunc func;
@@ -34,6 +44,7 @@ struct lval {
 
 lval* lval_num(long num);
 lval* lval_bool(int boole);
+lval* lval_str(char* str);
 lval* lval_err(char* fmt, ...);
 lval* lval_sym(char* sym);
 lval* lval_sexpr(void);

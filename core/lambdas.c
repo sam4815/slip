@@ -1,7 +1,7 @@
 #include <string.h>
 #include "lval_operations.h"
 #include "assert.h"
-#include "stringify.h"
+#include "lval_stringify.h"
 #include "qexpressions.h"
 #include "environment.h"
 #include "lambdas.h"

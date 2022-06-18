@@ -7,11 +7,26 @@ lval* parse_lval_number(mpc_ast_t* tree) {
 	return errno == ERANGE ? lval_err("Invalid number") : lval_num(number);
 }
 
+lval* parse_lval_string(mpc_ast_t* tree) {
+  // Ignore first and last characters, which are quotation marks
+  tree->contents[strlen(tree->contents) - 1] = '\0';
+  char* unescaped_string = malloc(strlen(tree->contents));
+  strcpy(unescaped_string, tree->contents + 1);
+
+  unescaped_string = mpcf_unescape(unescaped_string);
+
+  lval* result = lval_str(unescaped_string);
+  free(unescaped_string);
+
+  return result;
+}
+
 lval* parse_lval(mpc_ast_t* tree) {
 	lval* parsed_lval = lval_sexpr();
 
 	if (strstr(tree->tag, "number")) { parsed_lval = parse_lval_number(tree); }
 	if (strstr(tree->tag, "symbol")) { parsed_lval = lval_sym(tree->contents); }
+	if (strstr(tree->tag, "string")) { parsed_lval = parse_lval_string(tree); }
 	if (strstr(tree->tag, "qexpr")) { parsed_lval = lval_qexpr(); }
 	if (strstr(tree->tag, "sexpr") || strcmp(tree->tag, ">") == 0) {
 		parsed_lval = lval_sexpr();

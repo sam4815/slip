@@ -48,6 +48,10 @@ void delete_lval(lval* v) {
 		free(v->sym);
 	}
 
+  if (v->type == LVAL_STR) {
+		free(v->str);
+	}
+
 	if (v->type == LVAL_SEXPR || v->type == LVAL_QEXPR) {
 		for (int i = 0; i < v->count; i++) {
 			delete_lval(v->cell[i]);
@@ -79,6 +83,11 @@ lval* copy_lval(lval* v) {
 	if (v->type == LVAL_ERR) {
 		x->err = malloc(strlen(v->err) + 1);
 		strcpy(x->err, v->err);
+	}
+
+  if (v->type == LVAL_STR) {
+		x->str = malloc(strlen(v->str) + 1);
+		strcpy(x->str, v->str);
 	}
 
 	if (v->type == LVAL_FUNC && v->func != NULL) { x->func = v->func; }

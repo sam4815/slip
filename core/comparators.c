@@ -10,6 +10,7 @@ bool are_lvals_equal(lval* a, lval* b) {
 
   if (a->type == LVAL_NUM) { return a->num == b->num; }
   if (a->type == LVAL_SYM) { return strcmp(a->sym, b->sym) == 0; }
+  if (a->type == LVAL_STR) { return strcmp(a->str, b->str) == 0; }
   if (a->type == LVAL_ERR) { return strcmp(a->err, b->err) == 0; }
 
   if (a->type == LVAL_QEXPR || a->type == LVAL_SEXPR) {
