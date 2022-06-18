@@ -31,8 +31,8 @@ lval* evaluate_lval(lenv* env, lval* val) {
 		if (val->cell[i]->type == LVAL_ERR) { return extract_lval(val, i); }
 	}
 
-  // If the first child isn't a function, just extract and return the evaluated first child
-  if (val->cell[0]->type != LVAL_FUNC) { return evaluate_lval(env, extract_lval(val, 0)); }
+  // If the first child isn't a function, just extract and return the final evaluated child
+  if (val->cell[0]->type != LVAL_FUNC) { return extract_lval(val, val->count - 1); }
 
 	// Assume val is an s-expression and perform the first child (a function) on the remaining children
 	lval* func = pop_lval(val, 0);
@@ -44,7 +44,8 @@ lval* evaluate_lval(lenv* env, lval* val) {
 
 void destroy_slip(mpc_parser_t* Parser, lenv* e) {
   delete_env(e);
-	mpc_cleanup(1, Parser);
+	mpc_cleanup(9, Parser, Expression, Sexpression, Qexpression,
+    Symbol, String, Comment, Boolean, Number);
 }
 
 char* evaluate_string(mpc_parser_t* Parser, lenv* e, char* input) {
@@ -52,7 +53,7 @@ char* evaluate_string(mpc_parser_t* Parser, lenv* e, char* input) {
   int parse_success = mpc_parse("input", input, Parser, &result);
 
 	if (!parse_success) { return "Error parsing input"; }
-  
+
   lval* evaluation = evaluate_lval(e, parse_lval(result.output));
   char* evaluation_str = stringify_lval(evaluation);
 
@@ -65,15 +66,15 @@ char* evaluate_string(mpc_parser_t* Parser, lenv* e, char* input) {
 slip* initialize_slip(void) {
   slip* slip_ptr = malloc(sizeof(slip));
 
-	mpc_parser_t* Parser = mpc_new("slip");
-	mpc_parser_t* Expression = mpc_new("expr");
-	mpc_parser_t* Sexpression = mpc_new("sexpr");
-	mpc_parser_t* Qexpression = mpc_new("qexpr");
-	mpc_parser_t* Symbol = mpc_new("symbol");
-	mpc_parser_t* String = mpc_new("string");
-	mpc_parser_t* Comment = mpc_new("comment");
-	mpc_parser_t* Boolean = mpc_new("boolean");
-	mpc_parser_t* Number = mpc_new("number");
+	Parser = mpc_new("slip");
+	Expression = mpc_new("expr");
+	Sexpression = mpc_new("sexpr");
+	Qexpression = mpc_new("qexpr");
+	Symbol = mpc_new("symbol");
+	String = mpc_new("string");
+	Comment = mpc_new("comment");
+	Boolean = mpc_new("boolean");
+	Number = mpc_new("number");
 
 	mpca_lang(MPCA_LANG_DEFAULT,
 			"                                                                       \

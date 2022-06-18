@@ -6,6 +6,7 @@
 #include "numbers.h"
 
 lval* operate(lenv* e, lval* v, char* operation) {
+  ASSERT_MIN_NUM_ARGS(v, 1, operation);
   ASSERT_CHILD_TYPE(v, LVAL_NUM, 0, operation);
 	lval* accumulator = pop_lval(v, 0);
 

@@ -4,6 +4,7 @@
 #include "numbers.h"
 #include "qexpressions.h"
 #include "lambdas.h"
+#include "load_file.h"
 #include "logical_operators.h"
 #include "library.h"
 #include "slip.h"
@@ -46,6 +47,9 @@ void set_built_in_functions(lenv* e) {
 
   // Conditionals
   set_func_on_env(e, "if", if_condition);
+
+  // Load .slip files
+  set_func_on_env(e, "load_file", load_file);
 }
 
 void build_library(mpc_parser_t* Parser, lenv* e) {

@@ -24,16 +24,32 @@ void add_history(char* unused) {}
 #define YELLOW "\033[1;93m"
 #define RESET "\033[0m"
 
+void print_message(char* message) {
+  if (strlen(message) == 0) { return; }
+  
+  printf(YELLOW "%s\n" RESET, message);
+}
+
 int main(int argc, char** argv) {
 	slip* slippy = initialize_slip();
 
+  // If passed slip file, load and evaluate it
+  if (argc == 2) {
+    char* input = malloc(strlen(argv[1]) + 14 + 1);
+    sprintf(input, "load_file \"%s\"", argv[1]);
+
+    print_message(slippy->evaluate_string(slippy->parser, slippy->environment, input));
+
+    free(input);
+    return 0;
+  }
+
+  // Else load REPL
 	while (1) {
 		char* input = readline("🍂 ");
 		if (strlen(input) > 0) { add_history(input); }
 
-		char* message = slippy->evaluate_string(slippy->parser, slippy->environment, input);
-
-    if (strlen(message) > 0) { printf(YELLOW "%s\n" RESET, message); }
+		print_message(slippy->evaluate_string(slippy->parser, slippy->environment, input));
 
 		free(input);
 	}
