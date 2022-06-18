@@ -1,0 +1,21 @@
+(def {fun}
+  (\
+    {args body}
+    {def (head args) (\ (tail args) body)}
+  )
+)
+
+(fun {len l} {
+  if (== l {})
+    {0}
+    {+ 1 (len (tail l))}
+})
+
+(fun {includes l a} {
+  if (== (head l) a)
+    {true}
+    {if (== (len l) 1)
+      {false}
+      {includes (tail l) a}
+    }
+})
