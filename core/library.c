@@ -54,5 +54,5 @@ void set_built_in_functions(lenv* e) {
 
 void build_library(lenv* e) {
   set_built_in_functions(e);
-  evaluate_string(e, "load_file \"core/library.slip\"");
+  evaluate_string(e, "load_file \"build/library.slip\"");
 }
