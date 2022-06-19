@@ -138,5 +138,10 @@ testcases* get_testcases(void) {
     "eval (head {\"hello\" \"world\"})",
   0);
 
+  add_testcase(tests, "Library functions loaded", "30",
+    "fun {add-ten a} {+ a 10}",
+    "add-ten 20",
+  0);
+
   return tests;
 }
