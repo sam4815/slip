@@ -192,7 +192,7 @@ var Module = typeof Module !== 'undefined' ? Module : {};
     }
   
    }
-   loadPackage({"files": [{"filename": "/build/test", "start": 0, "end": 223032, "audio": 0}, {"filename": "/build/library.slip", "start": 223032, "end": 223309, "audio": 0}, {"filename": "/build/slip.wasm", "start": 223309, "end": 542520, "audio": 0}], "remote_package_size": 542520, "package_uuid": "8270ebd6-279b-4772-95eb-5063ac50d514"});
+   loadPackage({"files": [{"filename": "/build/test", "start": 0, "end": 223032, "audio": 0}, {"filename": "/build/library.slip", "start": 223032, "end": 223309, "audio": 0}, {"filename": "/build/slip.wasm", "start": 223309, "end": 542520, "audio": 0}], "remote_package_size": 542520, "package_uuid": "496043fc-0ba1-48f5-b421-6ad3fc1acdf5"});
   
   })();
   
