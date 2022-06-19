@@ -11,5 +11,5 @@ int main() {
 
 EMSCRIPTEN_KEEPALIVE
 char* evaluate(char* input) {
-  return slippy->evaluate_string(slippy->parser, slippy->environment, input);
+  return slippy->evaluate_string(slippy->environment, input);
 }
