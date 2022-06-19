@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
     char* input = malloc(strlen(argv[1]) + 14 + 1);
     sprintf(input, "load_file \"%s\"", argv[1]);
 
-    print_message(slippy->evaluate_string(slippy->parser, slippy->environment, input));
+    print_message(slippy->evaluate_string(slippy->environment, input));
 
     free(input);
     return 0;
@@ -49,12 +49,12 @@ int main(int argc, char** argv) {
 		char* input = readline("🍂 ");
 		if (strlen(input) > 0) { add_history(input); }
 
-		print_message(slippy->evaluate_string(slippy->parser, slippy->environment, input));
+		print_message(slippy->evaluate_string(slippy->environment, input));
 
 		free(input);
 	}
 
-  slippy->destroy(slippy->parser, slippy->environment);
+  slippy->destroy(slippy->environment);
 	
 	return 0;
 }

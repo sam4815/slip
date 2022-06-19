@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
     
     for (int j = 0; j < tests->tests[i]->input_count; j++) {
       char* line = tests->tests[i]->input[j];
-      message = slippy->evaluate_string(slippy->parser, slippy->environment, line);
+      message = slippy->evaluate_string(slippy->environment, line);
     }
 
     if (strcmp(message, expected) != 0) {
@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
     }
   }
   
-  slippy->destroy(slippy->parser, slippy->environment);
+  slippy->destroy(slippy->environment);
 
   printf(GREEN "✨ All test cases passed.\n" RESET);
 	return 0;

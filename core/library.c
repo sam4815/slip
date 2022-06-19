@@ -52,7 +52,7 @@ void set_built_in_functions(lenv* e) {
   set_func_on_env(e, "load_file", load_file);
 }
 
-void build_library(mpc_parser_t* Parser, lenv* e) {
+void build_library(lenv* e) {
   set_built_in_functions(e);
-  evaluate_string(Parser, e, "load_file \"core/library.slip\"");
+  evaluate_string(e, "load_file \"core/library.slip\"");
 }

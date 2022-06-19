@@ -8,7 +8,7 @@ lval* load_file(lenv* e, lval* v) {
   ASSERT_CHILD_TYPE(v, LVAL_STR, 0, "load_file");
 
   mpc_result_t result;
-  int parse_success = mpc_parse_contents(v->cell[0]->str, Parser, &result);
+  int parse_success = mpc_parse_contents(v->cell[0]->str, get_parser(), &result);
 
   if (!parse_success) {
     return lval_err(mpc_err_string(result.error));

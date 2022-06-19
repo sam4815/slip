@@ -42,13 +42,13 @@ lval* evaluate_lval(lenv* env, lval* val) {
 	return result;
 };
 
-void destroy_slip(mpc_parser_t* Parser, lenv* e) {
+void destroy_slip(lenv* e) {
   delete_env(e);
 	mpc_cleanup(9, Parser, Expression, Sexpression, Qexpression,
     Symbol, String, Comment, Boolean, Number);
 }
 
-char* evaluate_string(mpc_parser_t* Parser, lenv* e, char* input) {
+char* evaluate_string(lenv* e, char* input) {
   mpc_result_t result;
   int parse_success = mpc_parse("input", input, Parser, &result);
 
@@ -61,6 +61,10 @@ char* evaluate_string(mpc_parser_t* Parser, lenv* e, char* input) {
   mpc_ast_delete(result.output);
 
   return evaluation_str;
+}
+
+mpc_parser_t* get_parser(void) {
+  return Parser;
 }
 
 slip* initialize_slip(void) {
@@ -93,7 +97,7 @@ slip* initialize_slip(void) {
       Symbol, String, Comment, Boolean, Number);
 
 	lenv* environment = initialize_env();
-  build_library(Parser, environment);
+  build_library(environment);
 
   slip_ptr->parser = Parser;
   slip_ptr->environment = environment;
