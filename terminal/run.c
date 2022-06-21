@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "../core/slip.h"
 
 #ifdef _WIN32

@@ -44,62 +44,23 @@ lval* evaluate_lval(lenv* env, lval* val) {
 
 void destroy_slip(lenv* e) {
   delete_env(e);
-	mpc_cleanup(9, Parser, Expression, Sexpression, Qexpression,
-    Symbol, String, Comment, Boolean, Number);
 }
 
 char* evaluate_string(lenv* e, char* input) {
-  mpc_result_t result;
-  int parse_success = mpc_parse("input", input, Parser, &result);
-
-	if (!parse_success) { return "Error parsing input"; }
-
-  lval* evaluation = evaluate_lval(e, parse_lval(result.output));
+  lval* evaluation = evaluate_lval(e, read_string(input));
   char* evaluation_str = stringify_lval(evaluation);
 
   delete_lval(evaluation);
-  mpc_ast_delete(result.output);
 
   return evaluation_str;
-}
-
-mpc_parser_t* get_parser(void) {
-  return Parser;
 }
 
 slip* initialize_slip(void) {
   slip* slip_ptr = malloc(sizeof(slip));
 
-	Parser = mpc_new("slip");
-	Expression = mpc_new("expr");
-	Sexpression = mpc_new("sexpr");
-	Qexpression = mpc_new("qexpr");
-	Symbol = mpc_new("symbol");
-	String = mpc_new("string");
-	Comment = mpc_new("comment");
-	Boolean = mpc_new("boolean");
-	Number = mpc_new("number");
-
-	mpca_lang(MPCA_LANG_DEFAULT,
-			"                                                                       \
-			symbol     : /[a-zA-Z0-9_+\\^\\-*\\/\\\\=<>!&]+/ ;                      \
-			number     : /-?[0-9]+/ ;                                               \
-      string     : /\"(\\\\.|[^\"])*\"/ ;                                     \
-      boolean    : /true|false/ ;                                             \
-      comment    : /;[^\\r\\n]*/ ;                                            \
-			sexpr      : '(' <expr>* ')' ;                                          \
-			qexpr      : '{' <expr>* '}' ;                                          \
-			expr       : <number> | <string> | <boolean> | <comment>                \
-                 | <sexpr> | <qexpr> | <symbol> ;                             \
-			slip	     : /^/ <expr>* /$/ ;                                          \
-			",
-			Parser, Sexpression, Qexpression, Expression,
-      Symbol, String, Comment, Boolean, Number);
-
 	lenv* environment = initialize_env();
   build_library(environment);
 
-  slip_ptr->parser = Parser;
   slip_ptr->environment = environment;
   slip_ptr->evaluate_string = evaluate_string;
   slip_ptr->destroy = destroy_slip;

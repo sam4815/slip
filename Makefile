@@ -1,4 +1,4 @@
-SRC = $(wildcard core/*.c) core/mpc/mpc.c
+SRC = $(wildcard core/*.c)
 CFLAGS = -g -Wall -std=c99
 CC = cc
 LIBS = -lm

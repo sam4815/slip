@@ -1,3 +1,0 @@
-[submodule "mpc"]
-	path = core/mpc
-	url = git@github.com:orangeduck/mpc.git

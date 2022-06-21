@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mpc/mpc.h"
 #include "lval_stringify.h"
+#include "string_escaping.h"
 
 char* stringify_type(int t) {
   switch(t) {
@@ -80,11 +80,28 @@ char* stringify_lval(lval* v) {
   }
 
   if (v->type == LVAL_STR) {
-    char* c = malloc(strlen(v->str) + 1);
-    char* escaped = malloc(strlen(v->str) + 1);
-    strcpy(escaped, v->str);
-    escaped = mpcf_escape(escaped);
-    sprintf(c, "\"%s\"", escaped);
+    char* c = calloc(1, 1);
+    strcpy(c, "\"");
+
+    for (int i = 0; i < strlen(v->str); i++) {
+      char* character = malloc(2);
+      character[0] = v->str[i];
+      character[1] = '\0';
+
+      if (char_escapable(v->str[i])) {
+        char* escaped_character = char_escape(v->str[i]);
+        character = realloc(character, strlen(escaped_character) + 1);
+      }
+      
+      c = realloc(c, strlen(c) + strlen(character) + 1);
+      strcat(c, character);
+      strcat(c, "\0");
+    }
+
+    c = realloc(c, strlen(c) + 2);
+    strcat(c, "\"");
+    strcat(c, "\0");
+
     return c;
   }
 
