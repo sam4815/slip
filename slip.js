@@ -192,7 +192,7 @@ var Module = typeof Module !== 'undefined' ? Module : {};
     }
   
    }
-   loadPackage({"files": [{"filename": "/build/test", "start": 0, "end": 223032, "audio": 0}, {"filename": "/build/library.slip", "start": 223032, "end": 223309, "audio": 0}, {"filename": "/build/slip.wasm", "start": 223309, "end": 542520, "audio": 0}], "remote_package_size": 542520, "package_uuid": "a2f9d267-dc3c-4ba1-87bb-452eb67e2dd4"});
+   loadPackage({"files": [{"filename": "/build/test", "start": 0, "end": 94608, "audio": 0}, {"filename": "/build/library.slip", "start": 94608, "end": 94885, "audio": 0}, {"filename": "/build/slip.wasm", "start": 94885, "end": 225916, "audio": 0}], "remote_package_size": 225916, "package_uuid": "31742b9a-113d-4de0-9caa-a288c04283b7"});
   
   })();
   
@@ -855,8 +855,8 @@ var wasmMemory;
 // In the wasm backend, we polyfill the WebAssembly object,
 // so this creates a (non-native-wasm) table for us.
 var wasmTable = new WebAssembly.Table({
-  'initial': 82,
-  'maximum': 82 + 0,
+  'initial': 39,
+  'maximum': 39 + 0,
   'element': 'anyfunc'
 });
 
@@ -1475,11 +1475,11 @@ function updateGlobalBufferAndViews(buf) {
 }
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 5250944,
+    STACK_BASE = 5247952,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 8064,
-    DYNAMIC_BASE = 5250944,
-    DYNAMICTOP_PTR = 7904;
+    STACK_MAX = 5072,
+    DYNAMIC_BASE = 5247952,
+    DYNAMICTOP_PTR = 4912;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -2040,7 +2040,7 @@ var ASM_CONSTS = {
 
 
 
-// STATICTOP = STATIC_BASE + 7040;
+// STATICTOP = STATIC_BASE + 4048;
 /* global initializers */  __ATINIT__.push({ func: function() { ___wasm_call_ctors() } });
 
 
@@ -4607,7 +4607,7 @@ var ASM_CONSTS = {
   }
 
   function _emscripten_get_sbrk_ptr() {
-      return 7904;
+      return 4912;
     }
 
   function _emscripten_memcpy_big(dest, src, num) {
@@ -4810,16 +4810,13 @@ var dynCall_iii = Module["dynCall_iii"] = createExportWrapper("dynCall_iii");
 var dynCall_vi = Module["dynCall_vi"] = createExportWrapper("dynCall_vi");
 
 /** @type {function(...*):?} */
-var dynCall_ii = Module["dynCall_ii"] = createExportWrapper("dynCall_ii");
-
-/** @type {function(...*):?} */
-var dynCall_i = Module["dynCall_i"] = createExportWrapper("dynCall_i");
-
-/** @type {function(...*):?} */
 var dynCall_jiji = Module["dynCall_jiji"] = createExportWrapper("dynCall_jiji");
 
 /** @type {function(...*):?} */
 var dynCall_iiii = Module["dynCall_iiii"] = createExportWrapper("dynCall_iiii");
+
+/** @type {function(...*):?} */
+var dynCall_ii = Module["dynCall_ii"] = createExportWrapper("dynCall_ii");
 
 /** @type {function(...*):?} */
 var dynCall_iidiiii = Module["dynCall_iidiiii"] = createExportWrapper("dynCall_iidiiii");
