@@ -45,10 +45,23 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-  // Else load REPL
+	// Load history
+	FILE* history_file;
+	history_file = fopen("build/.repl_history", "a+");
+	rewind(history_file);
+	setlinebuf(history_file);
+	char line[256];
+	while (fgets(line, sizeof(line), history_file)) {
+		add_history(line);
+	}
+
+  // Load REPL
 	while (1) {
 		char* input = readline("🍂 ");
-		if (strlen(input) > 0) { add_history(input); }
+		if (strlen(input) > 0) {
+			fprintf(history_file, "%s\n", input);
+			add_history(input);
+		}
 
 		print_message(slippy->evaluate_string(slippy->environment, input));
 
