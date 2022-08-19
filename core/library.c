@@ -1,6 +1,7 @@
 #include "environment.h"
 #include "comparators.h"
 #include "conditionals.h"
+#include "database.h"
 #include "numbers.h"
 #include "qexpressions.h"
 #include "lambdas.h"
@@ -47,6 +48,11 @@ void set_built_in_functions(lenv* e) {
 
   // Conditionals
   set_func_on_env(e, "if", if_condition);
+
+	// Database operations
+	set_func_on_env(e, "insert", insert);
+	set_func_on_env(e, "select", select);
+	set_func_on_env(e, "delete", delete);
 
   // Load .slip files
   set_func_on_env(e, "load_file", load_file);
