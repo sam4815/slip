@@ -192,7 +192,7 @@ var Module = typeof Module !== 'undefined' ? Module : {};
     }
   
    }
-   loadPackage({"files": [{"filename": "/build/slip.wasm", "start": 0, "end": 131178, "audio": 0}, {"filename": "/build/test", "start": 131178, "end": 225786, "audio": 0}, {"filename": "/build/library.slip", "start": 225786, "end": 226063, "audio": 0}], "remote_package_size": 226063, "package_uuid": "118f9822-a258-4a41-bec5-d6a699ed8e44"});
+   loadPackage({"files": [{"filename": "/build/slip.wasm", "start": 0, "end": 133969, "audio": 0}, {"filename": "/build/test", "start": 133969, "end": 229993, "audio": 0}, {"filename": "/build/library.slip", "start": 229993, "end": 230270, "audio": 0}], "remote_package_size": 230270, "package_uuid": "6aec35c3-250b-48da-9d4e-74262dbb8ef4"});
   
   })();
   
@@ -855,8 +855,8 @@ var wasmMemory;
 // In the wasm backend, we polyfill the WebAssembly object,
 // so this creates a (non-native-wasm) table for us.
 var wasmTable = new WebAssembly.Table({
-  'initial': 39,
-  'maximum': 39 + 0,
+  'initial': 42,
+  'maximum': 42 + 0,
   'element': 'anyfunc'
 });
 
@@ -1475,11 +1475,11 @@ function updateGlobalBufferAndViews(buf) {
 }
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 5247952,
+    STACK_BASE = 5248048,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 5072,
-    DYNAMIC_BASE = 5247952,
-    DYNAMICTOP_PTR = 4912;
+    STACK_MAX = 5168,
+    DYNAMIC_BASE = 5248048,
+    DYNAMICTOP_PTR = 5008;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -2040,7 +2040,7 @@ var ASM_CONSTS = {
 
 
 
-// STATICTOP = STATIC_BASE + 4048;
+// STATICTOP = STATIC_BASE + 4144;
 /* global initializers */  __ATINIT__.push({ func: function() { ___wasm_call_ctors() } });
 
 
@@ -4607,7 +4607,7 @@ var ASM_CONSTS = {
   }
 
   function _emscripten_get_sbrk_ptr() {
-      return 4912;
+      return 5008;
     }
 
   function _emscripten_memcpy_big(dest, src, num) {
