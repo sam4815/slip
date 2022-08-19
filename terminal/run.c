@@ -58,6 +58,9 @@ int main(int argc, char** argv) {
   // Load REPL
 	while (1) {
 		char* input = readline("🍂 ");
+
+		if (strcmp(input, "exit") == 0) { exit(0); }
+
 		if (strlen(input) > 0) {
 			fprintf(history_file, "%s\n", input);
 			add_history(input);
