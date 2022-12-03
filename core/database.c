@@ -71,7 +71,8 @@ row* create_row(uint32_t id, char* username, char* email) {
 table* TABLE = NULL;
 
 lval* select(lenv* e, lval* v) {
-  ASSERT_CHILD_TYPE(v, LVAL_NUM, 0, "insert");
+  ASSERT_NUM_ARGS(v, 1, "select");
+  ASSERT_CHILD_TYPE(v, LVAL_NUM, 0, "select");
 
   if (TABLE == NULL) { TABLE = create_table(); }
 
