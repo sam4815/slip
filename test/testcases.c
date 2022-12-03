@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 #include "testcases.h"
 #include "helpers.h"
 
@@ -141,6 +144,38 @@ testcases* get_testcases(void) {
   add_testcase(tests, "Library functions loaded", "30",
     "fun {add-ten a} {+ a 10}",
     "add-ten 20",
+  0);
+
+  add_testcase(tests, "Returns an error when row isn't in database", "Row not found.",
+    "select 3",
+  0);
+
+  add_testcase(tests, "Insert and select database row", "\"34 Full Name email@email.com\"",
+    "insert 34 \"Full Name\" \"email@email.com\"",
+    "select 34",
+  0);
+
+  char insert_statements[50000];
+  for (int i = 1; i < 1001; i++) {
+    char* insert_statement = malloc(50);
+    sprintf(insert_statement, "(insert %i \"%i\" \"%i@%i.com\")", i, i, i, i);
+    strcat(insert_statements, insert_statement);
+  }
+
+  add_testcase(tests, "Accepts hundreds of rows", "\"998 998 998@998.com\"",
+    insert_statements,
+    "select 998",
+  0);
+
+  char full_statement[70000];
+  for (int i = 1; i < 1400; i++) {
+    char* insert_statement = malloc(50);
+    sprintf(insert_statement, "(insert %i \"test\" \"test@testing.com\")", i);
+    strcat(full_statement, insert_statement);
+  }
+
+  add_testcase(tests, "Returns an error if the database is full", "Table is full.",
+    full_statement,
   0);
 
   return tests;
