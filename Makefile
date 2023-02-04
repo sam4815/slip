@@ -19,7 +19,7 @@ $(WEB_TARGET): $(SRC) $(wildcard web/*.c)
 
 $(TEST_TARGET): $(SRC) $(wildcard test/*.c)
 	@$(MAKE_TARGET_DIR)
-	@$(CC) $(CFLAGS) -o $@ $^
+	@$(CC) $(CFLAGS) -o $@ $^ $(LIBS) 
 
 start: $(TERM_TARGET)
 	@$(COPY_LIBRARY)
