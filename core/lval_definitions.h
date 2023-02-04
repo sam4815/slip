@@ -6,40 +6,40 @@ struct lenv;
 typedef struct lenv lenv;
 typedef struct lval lval;
 
-typedef lval*(*lfunc)(lenv*, lval*);
+typedef lval* (*lfunc)(lenv*, lval*);
 
 enum {
-  LVAL_NUM,
-  LVAL_STR,
-  LVAL_SYM,
-  LVAL_ERR,
-  LVAL_BOOL,
-  LVAL_SEXPR,
-  LVAL_QEXPR,
-  LVAL_FUNC,
+    LVAL_NUM,
+    LVAL_STR,
+    LVAL_SYM,
+    LVAL_ERR,
+    LVAL_BOOL,
+    LVAL_SEXPR,
+    LVAL_QEXPR,
+    LVAL_FUNC,
 };
 
 struct lval {
-	int type;
+    int type;
 
-  // Primitives
-	long num;
-  int boole;
-	char* err;
-	char* sym;
-	char* str;
+    // Primitives
+    long num;
+    int boole;
+    char* err;
+    char* sym;
+    char* str;
 
-  // Built-in functions
-	lfunc func;
+    // Built-in functions
+    lfunc func;
 
-  // User-defined functions
-  lenv* env;
-  lval* arguments;
-  lval* body;
+    // User-defined functions
+    lenv* env;
+    lval* arguments;
+    lval* body;
 
-  // Expressions
-	int count;
-	struct lval** cell;
+    // Expressions
+    int count;
+    struct lval** cell;
 };
 
 lval* lval_num(long num);

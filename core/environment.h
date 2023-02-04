@@ -1,11 +1,11 @@
 #include "lval_definitions.h"
 
 struct lenv {
-	int count;
-	lval** vals;
-	char** syms;
+    int count;
+    lval** vals;
+    char** syms;
 
-  lenv* parent;
+    lenv* parent;
 };
 
 lenv* initialize_env(void);

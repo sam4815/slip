@@ -1,15 +1,15 @@
 #include "lval_definitions.h"
 
-typedef char*(*pfunc)(lenv*, char*);
-typedef void(*dfunc)(lenv*);
+typedef char* (*pfunc)(lenv*, char*);
+typedef void (*dfunc)(lenv*);
 
 struct slip;
 typedef struct slip slip;
 
 struct slip {
-	lenv* environment;
-  pfunc evaluate_string;
-  dfunc destroy;
+    lenv* environment;
+    pfunc evaluate_string;
+    dfunc destroy;
 };
 
 slip* initialize_slip(void);

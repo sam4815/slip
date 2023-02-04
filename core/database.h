@@ -9,12 +9,12 @@ lval* select(lenv* e, lval* v);
 lval* delete(lenv* e, lval* v);
 
 typedef struct {
-  uint32_t id;
-  char username[32];
-  char email[255];
+    uint32_t id;
+    char username[32];
+    char email[255];
 } row;
 
 typedef struct {
-  uint32_t num_rows;
-  void* pages[TABLE_MAX_PAGES];
+    uint32_t num_rows;
+    void* pages[TABLE_MAX_PAGES];
 } table;
