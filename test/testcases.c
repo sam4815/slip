@@ -156,6 +156,16 @@ testcases* get_testcases(void)
         "select 34",
         0);
 
+    char long_name[] = "Max name length (32), max name l";
+    char long_name_insert_statement[100];
+    char long_name_select_result[100];
+    sprintf(long_name_insert_statement, "(insert 2 \"%s\" \"test@testing.com\")", long_name);
+    sprintf(long_name_select_result, "\"2 %s test@testing.com\"", long_name);
+    add_testcase(tests, "Allows inserting strings that are the maximum length", long_name_select_result,
+        long_name_insert_statement,
+        "select 2",
+        0);
+
     char insert_statements[50000];
     for (int i = 1; i < 1001; i++) {
         char* insert_statement = malloc(50);

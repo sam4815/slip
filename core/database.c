@@ -86,15 +86,15 @@ lval* select(lenv* e, lval* v)
     }
 
     lval* row_id = pop_lval(v, 0);
-    row* row_to_select = create_row(0, "", "");
+    row* curr_row = create_row(0, "", "");
 
     for (int i = 0; i < TABLE->num_rows; i++) {
-        deserialize_row(row_memory_location(TABLE, i), row_to_select);
+        deserialize_row(row_memory_location(TABLE, i), curr_row);
 
-        if (row_to_select->id == row_id->num) {
-            char* result = malloc(32);
-            sprintf(result, "%d %s %s", row_to_select->id, row_to_select->username, row_to_select->email);
-            return lval_str(result);
+        if (curr_row->id == row_id->num) {
+            char* selected_row = malloc(sizeof(row));
+            sprintf(selected_row, "%d %s %s", curr_row->id, curr_row->username, curr_row->email);
+            return lval_str(selected_row);
         }
     }
 
