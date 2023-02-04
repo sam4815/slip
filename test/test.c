@@ -10,11 +10,11 @@
 
 int main(int argc, char** argv)
 {
-    slip* slippy = initialize_slip();
-
     testcases* tests = get_testcases();
 
     for (int i = 0; i < tests->count; i++) {
+        slip* slippy = initialize_slip();
+
         char* expected = tests->tests[i]->expected;
         char* message;
 
@@ -28,9 +28,9 @@ int main(int argc, char** argv)
                 tests->tests[i]->name, expected, message);
             return -1;
         }
-    }
 
-    slippy->destroy(slippy->environment);
+        slippy->destroy(slippy->environment);
+    }
 
     printf(GREEN "✨ All test cases passed.\n" RESET);
     return 0;
