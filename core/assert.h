@@ -41,3 +41,9 @@
     ASSERT_CHILD_TYPE(v, LVAL_QEXPR, 0, "def"); \
     ASSERT_CHILD_NOT_EMPTY(v, "def");           \
     ASSERT_NUM_ARGS(v, v->cell[0]->count + 1, "def");
+
+#define ASSERT_LENGTH_LTE(val, length, name) \
+    ASSERT(val, strlen(val->str) <= length, "%s too long.", name);
+
+#define ASSERT_POSITIVE(val, name) \
+    ASSERT(val, val->num > 0, "%s must be greater than zero.", name);

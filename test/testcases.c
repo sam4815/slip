@@ -161,7 +161,7 @@ testcases* get_testcases(void)
     char long_name_select_result[100];
     sprintf(long_name_insert_statement, "(insert 2 \"%s\" \"test@testing.com\")", long_name);
     sprintf(long_name_select_result, "\"2 %s test@testing.com\"", long_name);
-    add_testcase(tests, "Allows inserting strings that are the maximum length", long_name_select_result,
+    add_testcase(tests, "Allows inserting usernames that are the maximum length", long_name_select_result,
         long_name_insert_statement,
         "select 2",
         0);
@@ -169,8 +169,12 @@ testcases* get_testcases(void)
     char too_long_name[] = "Max name length (33), max name le";
     char too_long_name_insert_statement[100];
     sprintf(too_long_name_insert_statement, "(insert 53 \"%s\" \"test@testing.com\")", too_long_name);
-    add_testcase(tests, "Allows inserting strings that are the maximum length", "Username too long.",
+    add_testcase(tests, "Prevents inserting usernames that are greater than the maximum length", "Username too long.",
         too_long_name_insert_statement,
+        0);
+
+    add_testcase(tests, "Preventsa inserting records with IDs less than zero", "ID must be greater than zero.",
+        "insert -10 \"test\" \"testing@test.com\"",
         0);
 
     char insert_statements[50000];
