@@ -192,7 +192,7 @@ var Module = typeof Module !== 'undefined' ? Module : {};
     }
   
    }
-   loadPackage({"files": [{"filename": "/build/slip.wasm", "start": 0, "end": 140961, "audio": 0}, {"filename": "/build/test", "start": 140961, "end": 239689, "audio": 0}, {"filename": "/build/library.slip", "start": 239689, "end": 239966, "audio": 0}], "remote_package_size": 239966, "package_uuid": "2116acc4-83e8-459d-894a-af23f4f53bea"});
+   loadPackage({"files": [{"filename": "/build/slip.wasm", "start": 0, "end": 141368, "audio": 0}, {"filename": "/build/test", "start": 141368, "end": 240208, "audio": 0}, {"filename": "/build/library.slip", "start": 240208, "end": 240485, "audio": 0}], "remote_package_size": 240485, "package_uuid": "4a2ca829-a876-451c-a0b5-8dcf0ac97f62"});
   
   })();
   
@@ -1475,11 +1475,11 @@ function updateGlobalBufferAndViews(buf) {
 }
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 5248288,
+    STACK_BASE = 5248320,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 5408,
-    DYNAMIC_BASE = 5248288,
-    DYNAMICTOP_PTR = 5248;
+    STACK_MAX = 5440,
+    DYNAMIC_BASE = 5248320,
+    DYNAMICTOP_PTR = 5280;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -2040,7 +2040,7 @@ var ASM_CONSTS = {
 
 
 
-// STATICTOP = STATIC_BASE + 4384;
+// STATICTOP = STATIC_BASE + 4416;
 /* global initializers */  __ATINIT__.push({ func: function() { ___wasm_call_ctors() } });
 
 
@@ -4607,7 +4607,7 @@ var ASM_CONSTS = {
   }
 
   function _emscripten_get_sbrk_ptr() {
-      return 5248;
+      return 5280;
     }
 
   function _emscripten_memcpy_big(dest, src, num) {
