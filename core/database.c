@@ -120,6 +120,14 @@ lval* insert(lenv* e, lval* v)
     lval* username = pop_lval(v, 0);
     lval* email = pop_lval(v, 0);
 
+    if (strlen(username->str) > USERNAME_MAX_LENGTH) {
+        return lval_err("Username too long.");
+    }
+
+    if (strlen(email->str) > EMAIL_MAX_LENGTH) {
+        return lval_err("Email too long.");
+    }
+
     row* row_to_insert = create_row(id->num, username->str, email->str);
 
     void* row_location = row_memory_location(TABLE, TABLE->num_rows);

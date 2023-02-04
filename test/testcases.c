@@ -166,6 +166,13 @@ testcases* get_testcases(void)
         "select 2",
         0);
 
+    char too_long_name[] = "Max name length (33), max name le";
+    char too_long_name_insert_statement[100];
+    sprintf(too_long_name_insert_statement, "(insert 53 \"%s\" \"test@testing.com\")", too_long_name);
+    add_testcase(tests, "Allows inserting strings that are the maximum length", "Username too long.",
+        too_long_name_insert_statement,
+        0);
+
     char insert_statements[50000];
     for (int i = 1; i < 1001; i++) {
         char* insert_statement = malloc(50);
