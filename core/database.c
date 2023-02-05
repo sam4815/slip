@@ -1,7 +1,6 @@
 #include "database.h"
 #include "assert.h"
 #include "lval_operations.h"
-#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,7 +15,6 @@ const uint32_t ID_OFFSET = 0;
 const uint32_t USERNAME_OFFSET = ID_OFFSET + ID_SIZE;
 const uint32_t EMAIL_OFFSET = USERNAME_OFFSET + USERNAME_SIZE;
 
-const uint32_t PAGE_SIZE = 4096;
 const uint32_t ROWS_PER_PAGE = PAGE_SIZE / ROW_SIZE;
 const uint32_t TABLE_MAX_ROWS = TABLE_MAX_PAGES * ROWS_PER_PAGE;
 
@@ -36,44 +34,6 @@ void deserialize_row(void* source, Row* destination)
     memcpy(&(destination->email), source + EMAIL_OFFSET, EMAIL_SIZE);
 }
 
-Pager* pager_open()
-{
-    int file_descriptor = open("build/.db",
-        O_RDWR | O_CREAT,
-        S_IWUSR | S_IRUSR);
-
-    if (file_descriptor == -1) {
-        printf("Unable to open database file.");
-        exit(1);
-    }
-
-    off_t file_length = lseek(file_descriptor, 0, SEEK_END);
-
-    Pager* pager = malloc(sizeof(Pager));
-    pager->file_descriptor = file_descriptor;
-    pager->file_length = file_length;
-
-    for (uint32_t i = 0; i < TABLE_MAX_PAGES; i++) {
-        pager->pages[i] = NULL;
-    }
-
-    return pager;
-}
-
-void* get_page(Pager* pager, uint32_t page_num)
-{
-    // If it's not in the cache, load from file
-    if (pager->pages[page_num] == NULL) {
-        void* page = malloc(PAGE_SIZE);
-
-        lseek(pager->file_descriptor, page_num * PAGE_SIZE, SEEK_SET);
-        read(pager->file_descriptor, page, PAGE_SIZE);
-        pager->pages[page_num] = page;
-    }
-
-    return pager->pages[page_num];
-}
-
 void* row_memory_location(Table* t, uint32_t row_num)
 {
     uint32_t page_num = row_num / ROWS_PER_PAGE;
@@ -83,12 +43,6 @@ void* row_memory_location(Table* t, uint32_t row_num)
     void* page = get_page(t->pager, page_num);
 
     return page + byte_offset;
-}
-
-void pager_flush(Pager* pager, uint32_t page_num, uint32_t page_size)
-{
-    lseek(pager->file_descriptor, page_num * PAGE_SIZE, SEEK_SET);
-    write(pager->file_descriptor, pager->pages[page_num], page_size);
 }
 
 void db_close()

@@ -33,6 +33,7 @@ int main(int argc, char** argv)
         truncate("build/.db", 0);
     }
     slippy->destroy(slippy->environment);
+    truncate("build/.db", 0);
 
     printf(GREEN "✨ All test cases passed.\n" RESET);
     return 0;
