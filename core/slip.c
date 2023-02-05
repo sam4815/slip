@@ -1,4 +1,5 @@
 #include "slip.h"
+#include "database.h"
 #include "environment.h"
 #include "lambdas.h"
 #include "library.h"
@@ -54,6 +55,7 @@ lval* evaluate_lval(lenv* env, lval* val)
 
 void destroy_slip(lenv* e)
 {
+    db_close();
     delete_env(e);
 }
 

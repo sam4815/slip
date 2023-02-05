@@ -65,6 +65,7 @@ int main(int argc, char** argv)
         char* input = readline("🍂 ");
 
         if (strcmp(input, "exit") == 0) {
+            slippy->destroy(slippy->environment);
             exit(0);
         }
 

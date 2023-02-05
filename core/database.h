@@ -6,17 +6,25 @@
 #define USERNAME_MAX_LENGTH 32
 #define EMAIL_MAX_LENGTH 255
 
-lval* insert(lenv* e, lval* v);
-lval* select(lenv* e, lval* v);
-lval* delete(lenv* e, lval* v);
+lval* insert_record(lenv* e, lval* v);
+lval* select_record(lenv* e, lval* v);
+lval* delete_record(lenv* e, lval* v);
+
+void db_close();
 
 typedef struct {
     uint32_t id;
     char username[USERNAME_MAX_LENGTH + 1];
     char email[EMAIL_MAX_LENGTH + 1];
-} row;
+} Row;
+
+typedef struct {
+    int file_descriptor;
+    uint32_t file_length;
+    void* pages[TABLE_MAX_PAGES];
+} Pager;
 
 typedef struct {
     uint32_t num_rows;
-    void* pages[TABLE_MAX_PAGES];
-} table;
+    Pager* pager;
+} Table;

@@ -51,9 +51,9 @@ void set_built_in_functions(lenv* e)
     set_func_on_env(e, "if", if_condition);
 
     // Database operations
-    set_func_on_env(e, "insert", insert);
-    set_func_on_env(e, "select", select);
-    set_func_on_env(e, "delete", delete);
+    set_func_on_env(e, "insert", insert_record);
+    set_func_on_env(e, "select", select_record);
+    set_func_on_env(e, "delete", delete_record);
 
     // Load .slip files
     set_func_on_env(e, "load_file", load_file);
